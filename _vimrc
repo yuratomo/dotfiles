@@ -19,17 +19,23 @@
 "---------------------------------------------------------------------------
 " Vundle
 "---------------------------------------------------------------------------
+" cd ~/.vim
+" git clone git://github.com/gmarik/vundle.git
 " cd ~/.vim/bundle
 " git clone git://github.com/yuratomo/dotfiles.git
-" git clone git://github.com/gmarik/vundle.git
 "
 " (win 7)
 " mklink ~\_vimrc ~\.vim\bundle\dotfiles\_vimrc
 " mklink ~\_gvimrc ~\.vim\bundle\dotfiles\_gvimrc
+" mklink c:\vim\vimrc_local.vim .vim\bundle\dotfiles\vimrc_local.vim
+" mklink c:\vim\gvimrc_local.vim .vim\bundle\dotfiles\gvimrc_local.vim
 "
 " (win xp)
-" fsutil hardlink create "~\_vimrc" "~\.vim\bundle\dotfiles\_vimrc"
-" fsutil hardlink create "~\_gvimrc" "~\.vim\bundle\dotfiles\_gvimrc"
+" cd ~
+" fsutil hardlink create _vimrc  .vim/bundle/dotfiles/_vimrc
+" fsutil hardlink create _gvimrc .vim/bundle/dotfiles/_gvimrc
+" fsutil hardlink create c:/vim/vimrc_local.vim .vim/bundle/dotfiles/vimrc_local.vim
+" fsutil hardlink create c:/vim/gvimrc_local.vim .vim/bundle/dotfiles/gvimrc_local.vim
 "
 
 set nocompatible
@@ -38,7 +44,6 @@ filetype off
 set rtp+=~/.vim/vundle.git/
 call vundle#rc()
 
-Bundle 'git://github.com/gmarik/vundle.git'
 Bundle 'git://github.com/vim-scripts/taglist.vim.git'
 Bundle 'git://github.com/Shougo/vimshell.git'
 Bundle 'git://github.com/Shougo/unite.vim.git'
@@ -50,8 +55,10 @@ Bundle 'git://github.com/yuratomo/dbg.vim.git'
 Bundle 'git://github.com/yuratomo/bg.vim.git'
 Bundle 'git://github.com/yuratomo/exdict.vim.git'
 Bundle 'git://github.com/yuratomo/neon.vim.git'
+Bundle 'git@github.com:yuratomo/ltools.vim.git'
 Bundle 'git://github.com/mattn/calendar-vim.git'
 Bundle 'git://github.com/Lokaltog/vim-powerline.git'
+Bundle 'git://github.com/tomasr/molokai.git'
 Bundle 'taglist.vim'
 
 filetype plugin indent on
@@ -134,7 +141,6 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 let g:vs_wdk_cond = 'chk'
 let g:vs_wdk_cpu  = 'x86'
 let g:vs_wdk_os   = 'WXP'
-
 
 "---------------------------------------------------------------------------
 " Convenient scripts
