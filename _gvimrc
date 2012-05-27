@@ -1,0 +1,31 @@
+" vim:set ts=4 sts=4 sw=4 tw=0:
+
+" フォント設定
+if has('win32')
+  set guifont=ＭＳ_ゴシック:h8:cSHIFTJIS
+  set linespace=-1
+  if has('printer')
+    set printfont=ＭＳ_ゴシック:h8:cSHIFTJIS
+  endif
+endif
+
+" ウインドウ設定
+"set guioptions+=C
+set guioptions-=T
+set guioptions-=m
+set guioptions-=a
+set guioptions-=r
+set guioptions-=R
+set guioptions-=l
+set guioptions-=L
+set guioptions-=L
+set guioptions-=e
+set columns=100
+set lines=42
+
+" マウス設定
+set mouse=a
+set nomousefocus
+set mousehide
+
+colorscheme neon
