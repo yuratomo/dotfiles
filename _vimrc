@@ -1,4 +1,4 @@
-" vim:set ts=4 sts=4 sw=4 tw=0:
+" vim:set ts=2 sts=2 sw=2 tw=0:
 "---------------------------------------------------------------------------
 " Manual Install
 "---------------------------------------------------------------------------
@@ -55,10 +55,12 @@ Bundle 'git://github.com/yuratomo/dbg.vim.git'
 Bundle 'git://github.com/yuratomo/bg.vim.git'
 Bundle 'git://github.com/yuratomo/exdict.vim.git'
 Bundle 'git://github.com/yuratomo/neon.vim.git'
-Bundle 'git@github.com:yuratomo/ltools.vim.git'
+Bundle 'git://github.com:yuratomo/ltools.vim.git'
 Bundle 'git://github.com/mattn/calendar-vim.git'
 Bundle 'git://github.com/Lokaltog/vim-powerline.git'
 Bundle 'git://github.com/tomasr/molokai.git'
+Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
+Bundle 'git://github.com/teramako/jscomplete-vim.git'
 Bundle 'taglist.vim'
 
 filetype plugin indent on
@@ -75,7 +77,9 @@ set number
 set list
 set nowrap
 set cmdheight=1
+set laststatus=2
 set showcmd
+set noet ts=4 sw=4
 set noscrollbind
 set listchars=tab:>\ ,extends:<,trail:_,eol:~
 set smartindent
@@ -88,7 +92,17 @@ set nobackup
 set noswapfile
 set complete=.,w,b,u
 set tags+=../../tags,../tags,./tags;
+filetype indent plugin on
 
+"---------------------------------------------------------------------------
+" File Type
+"---------------------------------------------------------------------------
+au FileType vim        set sw=2 ts=2 sts=2 et
+au FileType c,cpp      set sw=4 ts=4 sts=4 noet
+au FileType java       set sw=4 ts=4 sts=4 noet
+au FileType cs         set sw=4 ts=4 sts=4 et
+au FileType javascript set sw=2 ts=2 sts=2 et
+au FileType html       set sw=2 ts=2 sts=2 et
 
 "---------------------------------------------------------------------------
 " Keymap
@@ -141,6 +155,10 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 let g:vs_wdk_cond = 'chk'
 let g:vs_wdk_cpu  = 'x86'
 let g:vs_wdk_os   = 'WXP'
+
+" jscomplete-vim
+autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
+let g:jscomplete_use = ['dom', 'moz']
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -214,19 +232,19 @@ function! s:GetBufferFileName()
   return path
 endfunction
 
-"" ステータス拡張
-"set statusline=%<%f\%{FileTime()}%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P%=%{CurTime()} 
-"fu! FileTime() 
-"        let ext=tolower(expand("%:e")) 
-"        let fname=tolower(expand('%<')) 
-"        let filename=fname . '.' . ext 
-"        let msg="" 
-"        let msg=msg." ".strftime("[Modified %Y/%b/%d %H:%M:%S]",getftime(filename)) 
-"        return msg 
-"endf 
-"fu! CurTime() 
-"        let ftime="" 
-"        let ftime=ftime." ".strftime("[%y/%b/%d %H:%M:%S]") 
-"        return ftime 
-"endf 
+" ステータス拡張
+set statusline=%<%f\%{FileTime()}%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P%=%{CurTime()} 
+fu! FileTime() 
+  let ext=tolower(expand("%:e")) 
+  let fname=tolower(expand('%<')) 
+  let filename=fname . '.' . ext 
+  let msg="" 
+  let msg=msg." ".strftime("[Modified %Y/%b/%d %H:%M:%S]",getftime(filename)) 
+  return msg 
+endf 
+fu! CurTime() 
+  let ftime="" 
+  let ftime=ftime." ".strftime("[%y/%b/%d %H:%M:%S]") 
+  return ftime 
+endf 
 
