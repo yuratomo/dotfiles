@@ -15,6 +15,9 @@
 " - w3m
 "  http://www.daionet.gr.jp/~knok/software/misc/
 "
+" - diff
+"  http://gnuwin32.sourceforge.net/packages/diffutils.htm
+"
 
 "---------------------------------------------------------------------------
 " Vundle
@@ -41,29 +44,34 @@
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/vundle.git/
-call vundle#rc()
+if exists('vundle#rc')
+  set rtp+=~/.vim/vundle.git/
+  call vundle#rc()
 
-Bundle 'git://github.com/vim-scripts/taglist.vim.git'
-Bundle 'git://github.com/Shougo/vimshell.git'
-Bundle 'git://github.com/Shougo/unite.vim.git'
-Bundle 'git://github.com/Shougo/vimproc.git'
-Bundle 'git://github.com/yuratomo/dotfiles.git'
-Bundle 'git://github.com/yuratomo/w3m.vim.git'
-Bundle 'git://github.com/yuratomo/vs.vim.git'
-Bundle 'git://github.com/yuratomo/dbg.vim.git'
-Bundle 'git://github.com/yuratomo/bg.vim.git'
-Bundle 'git://github.com/yuratomo/exdict.vim.git'
-Bundle 'git://github.com/yuratomo/neon.vim.git'
-Bundle 'git://github.com:yuratomo/ltools.vim.git'
-Bundle 'git://github.com/mattn/calendar-vim.git'
-Bundle 'git://github.com/Lokaltog/vim-powerline.git'
-Bundle 'git://github.com/tomasr/molokai.git'
-Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
-Bundle 'git://github.com/teramako/jscomplete-vim.git'
-Bundle 'taglist.vim'
+  Bundle 'git://github.com/majutsushi/tagbar.git'
+  Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
+  Bundle 'git://github.com/vim-scripts/vimwiki'
+  Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
+  Bundle 'git://github.com/vim-scripts/OmniCppComplete.git'
+  Bundle 'git://github.com/Shougo/vimshell.git'
+  Bundle 'git://github.com/Shougo/vimproc.git'
+  Bundle 'git://github.com/yuratomo/dotfiles.git'
+  Bundle 'git://github.com/yuratomo/w3m.vim.git'
+  Bundle 'git://github.com/yuratomo/vs.vim.git'
+  Bundle 'git://github.com/yuratomo/dbg.vim.git'
+  Bundle 'git://github.com/yuratomo/bg.vim.git'
+  Bundle 'git://github.com/yuratomo/exdict.vim.git'
+  Bundle 'git://github.com/yuratomo/neon.vim.git'
+  Bundle 'git://github.com/yuratomo/gmail.vim.git'
+  Bundle 'git://github.com:yuratomo/ltools.vim.git'
+  Bundle 'git://github.com/mattn/calendar-vim.git'
+  Bundle 'git://github.com/teramako/jscomplete-vim.git'
+  "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
+  "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
+  "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
 
-filetype plugin indent on
+  filetype plugin indent on
+endif
 
 if has('win32') && executable('jvgrep')
   set grepprg=jvgrep
@@ -76,8 +84,6 @@ set visualbell
 set number
 set list
 set nowrap
-set cmdheight=1
-set laststatus=2
 set showcmd
 set noet ts=4 sw=4
 set noscrollbind
@@ -88,6 +94,8 @@ set wildmode=list:longest
 set formatoptions+=mM
 set hidden
 set autoread
+set laststatus=2
+set cmdheight=1
 set nobackup
 set noswapfile
 set complete=.,w,b,u
@@ -122,8 +130,8 @@ cnoremap <c-d> <DELETE>
 cnoremap <C-K> <C-\>estrpart(getcmdline(), 0, getcmdpos()-1)<CR>
 
 " like a browser
-nnoremap <SPACE>   <C-D>M
-nnoremap <S-SPACE> <C-U>M
+"nnoremap <SPACE>   <C-D>M
+"nnoremap <S-SPACE> <C-U>M
 
 " like a visual studio
 inoremap <expr> <ESC> pumvisible()?"\<C-E>":"\<ESC>"
@@ -166,7 +174,7 @@ let g:jscomplete_use = ['dom', 'moz']
 
 " バッファ変更時にカレントディレクトリに移動する
 command! -nargs=0 CdCurrent cd %:p:h
-autocmd BufEnter * CdCurrent
+"autocmd BufEnter * CdCurrent
 
 " 最後に編集した位置に移動する
 autocmd BufReadPost *
