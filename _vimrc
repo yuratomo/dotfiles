@@ -44,7 +44,7 @@
 set nocompatible
 filetype off
 
-if exists('vundle#rc')
+try
   set rtp+=~/.vim/vundle.git/
   call vundle#rc()
 
@@ -71,7 +71,7 @@ if exists('vundle#rc')
   "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
 
   filetype plugin indent on
-endif
+endtry
 
 if has('win32') && executable('jvgrep')
   set grepprg=jvgrep
