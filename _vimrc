@@ -42,9 +42,9 @@
 "
 
 set nocompatible
-filetype off
 
 try
+  filetype off
   set rtp+=~/.vim/vundle.git/
   call vundle#rc()
 
@@ -120,6 +120,8 @@ au FileType html       set sw=2 ts=2 sts=2 et
 inoremap <c-f> <RIGHT>
 inoremap <c-b> <LEFT>
 inoremap <c-d> <DELETE>
+inoremap <c-a> <HOME>
+inoremap <c-e> <END>
 cnoremap <c-p> <UP>
 cnoremap <c-n> <DOWN>
 cnoremap <c-f> <RIGHT>
@@ -128,10 +130,11 @@ cnoremap <c-a> <HOME>
 cnoremap <c-e> <END>
 cnoremap <c-d> <DELETE>
 cnoremap <C-K> <C-\>estrpart(getcmdline(), 0, getcmdpos()-1)<CR>
+cnoremap <c-w> <c-f>
 
 " like a browser
-"nnoremap <SPACE>   <C-D>M
-"nnoremap <S-SPACE> <C-U>M
+nnoremap <SPACE>   <C-D>M
+nnoremap <S-SPACE> <C-U>M
 
 " like a visual studio
 inoremap <expr> <ESC> pumvisible()?"\<C-E>":"\<ESC>"
@@ -174,7 +177,7 @@ let g:jscomplete_use = ['dom', 'moz']
 
 " バッファ変更時にカレントディレクトリに移動する
 command! -nargs=0 CdCurrent cd %:p:h
-"autocmd BufEnter * CdCurrent
+autocmd BufEnter * CdCurrent
 
 " 最後に編集した位置に移動する
 autocmd BufReadPost *

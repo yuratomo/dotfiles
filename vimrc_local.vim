@@ -1,6 +1,6 @@
 " no load default vimrc
 "let g:vimrc_local_finish=1
-let g:no_vimrc_example=1
+"let g:no_vimrc_example=1
 
 " no load menu
 let did_menu_trans = 1
