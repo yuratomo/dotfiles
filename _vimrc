@@ -64,6 +64,7 @@ try
   Bundle 'git://github.com/yuratomo/neon.vim.git'
   Bundle 'git://github.com/yuratomo/gmail.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
+  Bundle 'git://github.com:yuratomo/ildasm.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
@@ -166,6 +167,13 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 let g:vs_wdk_cond = 'chk'
 let g:vs_wdk_cpu  = 'x86'
 let g:vs_wdk_os   = 'WXP'
+
+" ildasm
+let g:ildasm_assemblies = [
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\WindowsBase.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationCore.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationFramework.dll',
+  \ ]
 
 " jscomplete-vim
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
