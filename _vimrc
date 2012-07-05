@@ -67,6 +67,7 @@ try
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
+  Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
   "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
   "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
   "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
@@ -173,6 +174,7 @@ let g:ildasm_assemblies = [
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\WindowsBase.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationCore.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationFramework.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Core.dll',
   \ ]
 
 " jscomplete-vim
