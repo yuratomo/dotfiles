@@ -113,6 +113,11 @@ au FileType java       set sw=4 ts=4 sts=4 noet
 au FileType cs         set sw=4 ts=4 sts=4 et
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
+au BufNewFile,BufRead *.build   setf ant
+au BufNewFile,BufRead *.xaml    setf xml
+au BufNewFile,BufRead *.targets setf xml
+au BufNewFile,BufRead *.config  setf xml
+au BufNewFile,BufRead *.*proj   setf xml
 
 "---------------------------------------------------------------------------
 " Keymap
@@ -171,10 +176,14 @@ let g:vs_wdk_os   = 'WXP'
 
 " ildasm
 let g:ildasm_assemblies = [
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\mscorlib.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\WindowsBase.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationCore.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationFramework.dll',
   \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Core.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Drawing.dll',
+  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Net.dll',
   \ ]
 
 " jscomplete-vim
