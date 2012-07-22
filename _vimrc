@@ -49,6 +49,7 @@ try
   call vundle#rc()
 
   Bundle 'git://github.com/majutsushi/tagbar.git'
+  Bundle 'git://github.com/msanders/snipmate.vim.git'
   Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki'
   Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
@@ -68,11 +69,15 @@ try
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
+  Bundle 'git://github.com/basyura/TweetVim.git'
+  Bundle 'git://github.com/tyru/open-browser.vim.git'
+  Bundle 'git://github.com/basyura/twibill.vim.git'
   "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
   "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
   "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
 
   filetype plugin indent on
+catch /.*/
 endtry
 
 if has('win32') && executable('jvgrep')
