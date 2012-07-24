@@ -49,7 +49,11 @@ try
   call vundle#rc()
 
   Bundle 'git://github.com/majutsushi/tagbar.git'
-  Bundle 'git://github.com/msanders/snipmate.vim.git'
+  "Bundle 'git://github.com/msanders/snipmate.vim.git'
+  Bundle 'git://github.com/garbas/vim-snipmate.git'
+  Bundle 'git://github.com/MarcWeber/vim-addon-mw-utils.git'
+  Bundle 'git://github.com/tomtom/tlib_vim.git'
+  Bundle 'git://github.com/honza/snipmate-snippets.git'
   Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki'
   Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
@@ -66,6 +70,7 @@ try
   Bundle 'git://github.com/yuratomo/gmail.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
+  Bundle 'git://github.com:yuratomo/snipmate-win-snippets.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
