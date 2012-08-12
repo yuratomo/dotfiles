@@ -112,6 +112,7 @@ set nobackup
 set noswapfile
 set complete=.,w,b,u
 set tags+=../../tags,../tags,./tags;
+set concealcursor=n
 filetype indent plugin on
 
 "---------------------------------------------------------------------------
@@ -199,6 +200,10 @@ let g:ildasm_assemblies = [
 " jscomplete-vim
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
 let g:jscomplete_use = ['dom', 'moz']
+
+" tweetvim
+let g:tweetvim_display_icon = 1
+let g:tweetvim_display_separator = 0
 
 "---------------------------------------------------------------------------
 " Convenient scripts
