@@ -49,17 +49,14 @@ try
   call vundle#rc()
 
   Bundle 'git://github.com/majutsushi/tagbar.git'
-  "Bundle 'git://github.com/msanders/snipmate.vim.git'
-  Bundle 'git://github.com/garbas/vim-snipmate.git'
-  Bundle 'git://github.com/MarcWeber/vim-addon-mw-utils.git'
-  Bundle 'git://github.com/tomtom/tlib_vim.git'
-  Bundle 'git://github.com/honza/snipmate-snippets.git'
-  Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
-  Bundle 'git://github.com/vim-scripts/vimwiki'
-  Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
   Bundle 'git://github.com/vim-scripts/OmniCppComplete.git'
+  Bundle 'git://github.com/tpope/vim-fugitive.git'
+  Bundle 'git://github.com/teramako/jscomplete-vim.git'
+  Bundle 'git://github.com/mattn/calendar-vim.git'
+  Bundle 'git://github.com/vim-scripts/vimwiki'
   Bundle 'git://github.com/Shougo/vimshell.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
+  Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/yuratomo/dotfiles.git'
   Bundle 'git://github.com/yuratomo/w3m.vim.git'
   Bundle 'git://github.com/yuratomo/vs.vim.git'
@@ -70,16 +67,25 @@ try
   Bundle 'git://github.com/yuratomo/gmail.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
-  Bundle 'git://github.com:yuratomo/snipmate-win-snippets.git'
-  Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/teramako/jscomplete-vim.git'
-  Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
-  Bundle 'git://github.com/basyura/TweetVim.git'
-  Bundle 'git://github.com/tyru/open-browser.vim.git'
-  Bundle 'git://github.com/basyura/twibill.vim.git'
+
+  "Bundle 'git://github.com/msanders/snipmate.vim.git'
   "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
   "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
   "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
+  "Bundle 'git://github.com/basyura/TweetVim.git'
+  "Bundle 'git://github.com/basyura/twibill.vim.git'
+  "Bundle 'git://github.com/tyru/open-browser.vim.git'
+  "Bundle 'git://github.com/vim-scripts/CmdlineCompl.vim.git'
+  "Bundle 'git://github.com/mattn/gist-vim.git'
+  "Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
+  "Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
+  "Bundle 'git://github.com/mattn/webapi-vim'
+  "Bundle 'git://github.com/garbas/vim-snipmate.git'
+  "Bundle 'git://github.com/MarcWeber/vim-addon-mw-utils.git'
+  "Bundle 'git://github.com/tomtom/tlib_vim.git'
+  "Bundle 'git://github.com/honza/snipmate-snippets.git'
+  "Bundle 'git://github.com:yuratomo/snipmate-win-snippets.git'
+  "Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
 
   filetype plugin indent on
 catch /.*/
@@ -201,9 +207,16 @@ let g:ildasm_assemblies = [
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
 let g:jscomplete_use = ['dom', 'moz']
 
-" tweetvim
-let g:tweetvim_display_icon = 1
-let g:tweetvim_display_separator = 0
+" gist.vim
+let g:gist_post_private = 1
+
+" Laltfile
+let g:Laltfile_mapping = []
+call add(g:Laltfile_mapping, {'\SL.xaml$'        : '.xaml.cs'     } )
+call add(g:Laltfile_mapping, {'\.xaml.cs$'       : 'SL.xaml'      } )
+call add(g:Laltfile_mapping, {'\WPF.xaml$'       : '.xaml.cs'     } )
+call add(g:Laltfile_mapping, {'\.xaml.cs$'       : 'WPF.xaml'      } )
+
 
 "---------------------------------------------------------------------------
 " Convenient scripts
