@@ -18,7 +18,9 @@
 " - diff
 "  http://gnuwin32.sourceforge.net/packages/diffutils.htm
 "
-
+" - AutoCompletion
+" http://sites.google.com/site/fudist/files/AutoCompletion.vim
+"
 "---------------------------------------------------------------------------
 " Vundle
 "---------------------------------------------------------------------------
@@ -212,10 +214,12 @@ let g:gist_post_private = 1
 
 " Laltfile
 let g:Laltfile_mapping = []
-call add(g:Laltfile_mapping, {'\SL.xaml$'        : '.xaml.cs'     } )
-call add(g:Laltfile_mapping, {'\.xaml.cs$'       : 'SL.xaml'      } )
-call add(g:Laltfile_mapping, {'\WPF.xaml$'       : '.xaml.cs'     } )
-call add(g:Laltfile_mapping, {'\.xaml.cs$'       : 'WPF.xaml'      } )
+call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
+call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
+call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
+
+" AutoCompletion
+let MyAutoComplete_StartLength = 3
 
 
 "---------------------------------------------------------------------------
@@ -305,4 +309,7 @@ fu! CurTime()
   let ftime=ftime." ".strftime("[%y/%b/%d %H:%M:%S]") 
   return ftime 
 endf 
+
+" ビジュアルモード選択した部分を*で検索
+vnoremap * "zy:let @/ = @z<CR>n
 
