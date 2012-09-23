@@ -18,9 +18,6 @@
 " - diff
 "  http://gnuwin32.sourceforge.net/packages/diffutils.htm
 "
-" - AutoCompletion
-" http://sites.google.com/site/fudist/files/AutoCompletion.vim
-"
 "---------------------------------------------------------------------------
 " Vundle
 "---------------------------------------------------------------------------
@@ -52,8 +49,8 @@ try
 
   Bundle 'git://github.com/majutsushi/tagbar.git'
   Bundle 'git://github.com/vim-scripts/OmniCppComplete.git'
-  Bundle 'git://github.com/tpope/vim-fugitive.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
+  Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki'
   Bundle 'git://github.com/Shougo/vimshell.git'
@@ -64,12 +61,15 @@ try
   Bundle 'git://github.com/yuratomo/vs.vim.git'
   Bundle 'git://github.com/yuratomo/dbg.vim.git'
   Bundle 'git://github.com/yuratomo/bg.vim.git'
-  Bundle 'git://github.com/yuratomo/exdict.vim.git'
   Bundle 'git://github.com/yuratomo/neon.vim.git'
   Bundle 'git://github.com/yuratomo/gmail.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
+  Bundle 'git://github.com:yuratomo/dotnet-complete.git'
+  Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
+  Bundle 'git://github.com:yuratomo/java-api-complete.git'
 
+  "Bundle 'git://github.com/tpope/vim-fugitive.git'
   "Bundle 'git://github.com/msanders/snipmate.vim.git'
   "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
   "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
@@ -88,6 +88,7 @@ try
   "Bundle 'git://github.com/honza/snipmate-snippets.git'
   "Bundle 'git://github.com:yuratomo/snipmate-win-snippets.git'
   "Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
+  "Bundle 'git://github.com/yuratomo/exdict.vim.git'
 
   filetype plugin indent on
 catch /.*/
@@ -98,7 +99,7 @@ if has('win32') && executable('jvgrep')
 endif
 
 "---------------------------------------------------------------------------
-" Setting
+" setting
 "---------------------------------------------------------------------------
 set visualbell
 set number
@@ -121,10 +122,13 @@ set noswapfile
 set complete=.,w,b,u
 set tags+=../../tags,../tags,./tags;
 set concealcursor=n
+set completeopt=menuone
+set helplang=ja,en
+set shortmess& shortmess+=I
 filetype indent plugin on
 
 "---------------------------------------------------------------------------
-" File Type
+" autocommand
 "---------------------------------------------------------------------------
 au FileType vim        set sw=2 ts=2 sts=2 et
 au FileType c,cpp      set sw=4 ts=4 sts=4 noet
@@ -133,13 +137,26 @@ au FileType cs         set sw=4 ts=4 sts=4 et
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
 au BufNewFile,BufRead *.build   setf ant
-au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.targets setf xml
 au BufNewFile,BufRead *.config  setf xml
 au BufNewFile,BufRead *.*proj   setf xml
+au BufNewFile,BufRead *.xaml    setf xml
+au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
+au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
+au BufNewFile,BufRead *.cs      setl bexpr=cs#baloon()
+au BufNewFile,BufRead *.cs      setl ballooneval
+au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
+au BufNewFile,BufRead *.java    setl bexpr=java#apiballoon()
+au BufNewFile,BufRead *.java    setl ballooneval
+au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
+au BufNewFile,BufRead *.cpp     setl bexpr=cppapi#balloon()
+au BufNewFile,BufRead *.cpp     setl ballooneval
+au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
+au BufNewFile,BufRead *.c       setl bexpr=cppapi#balloon()
+au BufNewFile,BufRead *.c       setl ballooneval
 
 "---------------------------------------------------------------------------
-" Keymap
+" keymap
 "---------------------------------------------------------------------------
 
 " like a emacs
@@ -158,13 +175,20 @@ cnoremap <c-d> <DELETE>
 cnoremap <C-K> <C-\>estrpart(getcmdline(), 0, getcmdpos()-1)<CR>
 cnoremap <c-w> <c-f>
 
+" turn off IME when leave insert mode
+inoremap <ESC> <ESC>
+inoremap <C-[> <ESC>
+
 " like a browser
-nnoremap <SPACE>   <C-D>M
-nnoremap <S-SPACE> <C-U>M
+nnoremap <space>   <C-D>M
+nnoremap <s-space> <C-U>M
 
 " like a visual studio
-inoremap <expr> <ESC> pumvisible()?"\<C-E>":"\<ESC>"
-inoremap <expr> <CR>  pumvisible()?"\<c-y>":"\<c-g>u\<CR>"
+inoremap <expr> <c-y>   pumvisible()?"\<c-y>":"\<c-x>\<c-o>\<c-p>"
+inoremap <expr> <CR>    pumvisible()?"\<c-y>":"\<c-g>u\<CR>"
+inoremap <expr> <TAB>   pumvisible()?"\<c-n>":"\<TAB>"
+inoremap <expr> <s-TAB> pumvisible()?"\<c-p>":"\<s-TAB>"
+inoremap <c-space> <c-x><c-o><c-p>
 
 " like a windows clipboard (<c-c> and <c-v>)
 vnoremap <c-c> "*y
@@ -209,18 +233,15 @@ let g:ildasm_assemblies = [
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
 let g:jscomplete_use = ['dom', 'moz']
 
-" gist.vim
-let g:gist_post_private = 1
-
 " Laltfile
 let g:Laltfile_mapping = []
 call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
 call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
 call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
 
-" AutoCompletion
-let MyAutoComplete_StartLength = 3
-
+" cppapi-complete
+let g:cppapi_pre_omnifunc = 'omni#cpp#complete#Main'
+let g:cppapi_ignore_files = [ 'mfc' ]
 
 "---------------------------------------------------------------------------
 " Convenient scripts
