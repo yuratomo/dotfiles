@@ -48,47 +48,24 @@ try
   call vundle#rc()
 
   Bundle 'git://github.com/majutsushi/tagbar.git'
-  Bundle 'git://github.com/vim-scripts/OmniCppComplete.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/vim-scripts/vimwiki'
-  Bundle 'git://github.com/Shougo/vimshell.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
-  Bundle 'git://github.com/yuratomo/dotfiles.git'
-  Bundle 'git://github.com/yuratomo/w3m.vim.git'
-  Bundle 'git://github.com/yuratomo/vs.vim.git'
-  Bundle 'git://github.com/yuratomo/dbg.vim.git'
-  Bundle 'git://github.com/yuratomo/bg.vim.git'
-  Bundle 'git://github.com/yuratomo/neon.vim.git'
-  Bundle 'git://github.com/yuratomo/gmail.vim.git'
+  Bundle 'git://github.com/tyru/eskk.vim.git'
+  Bundle 'git://github.com:yuratomo/dotfiles.git'
+  Bundle 'git://github.com:yuratomo/w3m.vim.git'
+  Bundle 'git://github.com:yuratomo/vs.vim.git'
+  Bundle 'git://github.com:yuratomo/dbg.vim.git'
+  Bundle 'git://github.com:yuratomo/bg.vim.git'
+  Bundle 'git://github.com:yuratomo/neon.vim.git'
+  Bundle 'git://github.com:yuratomo/gmail.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
-
-  "Bundle 'git://github.com/tpope/vim-fugitive.git'
-  "Bundle 'git://github.com/msanders/snipmate.vim.git'
-  "Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
-  "Bundle 'git://github.com/vim-scripts/phpcomplete.vim.git'
-  "Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
-  "Bundle 'git://github.com/basyura/TweetVim.git'
-  "Bundle 'git://github.com/basyura/twibill.vim.git'
-  "Bundle 'git://github.com/tyru/open-browser.vim.git'
-  "Bundle 'git://github.com/vim-scripts/CmdlineCompl.vim.git'
-  "Bundle 'git://github.com/mattn/gist-vim.git'
-  "Bundle 'git://github.com/vim-scripts/vcscommand.vim.git'
-  "Bundle 'git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git'
-  "Bundle 'git://github.com/mattn/webapi-vim'
-  "Bundle 'git://github.com/garbas/vim-snipmate.git'
-  "Bundle 'git://github.com/MarcWeber/vim-addon-mw-utils.git'
-  "Bundle 'git://github.com/tomtom/tlib_vim.git'
-  "Bundle 'git://github.com/honza/snipmate-snippets.git'
-  "Bundle 'git://github.com:yuratomo/snipmate-win-snippets.git'
-  "Bundle 'git://github.com/vim-scripts/MultipleSearch.git'
-  "Bundle 'git://github.com/yuratomo/exdict.vim.git'
 
   filetype plugin indent on
 catch /.*/
@@ -143,7 +120,7 @@ au BufNewFile,BufRead *.*proj   setf xml
 au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
 au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
-au BufNewFile,BufRead *.cs      setl bexpr=cs#baloon()
+au BufNewFile,BufRead *.cs      setl bexpr=cs#balloon()
 au BufNewFile,BufRead *.cs      setl ballooneval
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
 au BufNewFile,BufRead *.java    setl bexpr=java#apiballoon()
@@ -154,6 +131,9 @@ au BufNewFile,BufRead *.cpp     setl ballooneval
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl bexpr=cppapi#balloon()
 au BufNewFile,BufRead *.c       setl ballooneval
+au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
+au BufNewFile,BufRead *.h       setl bexpr=cppapi#balloon()
+au BufNewFile,BufRead *.h       setl ballooneval
 
 "---------------------------------------------------------------------------
 " keymap
@@ -205,6 +185,23 @@ else
   inoremap <script> <C-V> x<Esc><SID>Paste"_s
 endif
 
+" like a vimwiki
+if !isdirectory(expand('~\vimwiki\'))
+  call mkdir(expand('~\vimwiki\'))
+endif
+nnoremap \ww :<c-u>e ~\vimwiki\index.wiki<RETURN>:<c-u>setf markdown<RETURN>
+
+" quick open xxx
+exe 'nnoremap \vv :<c-u>e ' . expand('<sfile>') . '<RETURN>'
+nnoremap \cc :<c-u>CalendarH<RETURN>
+nnoremap \ss :<c-u>DbgShell<RETURN>
+nnoremap \mm :<c-u>Lmru<RETURN>
+nnoremap \ff :<c-u>Lfiler<RETURN>
+nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
+nnoremap \tt :<c-u>TagbarToggle<RETURN>
+nnoremap <F5> :<c-u>Back make<RETURN>
+
+
 "---------------------------------------------------------------------------
 " Plugin settings
 "---------------------------------------------------------------------------
@@ -218,15 +215,20 @@ let g:vs_wdk_cpu  = 'x86'
 let g:vs_wdk_os   = 'WXP'
 
 " ildasm
+if has('win64')
+  let dotnet4 = 'C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\'
+elseif has('win32')
+  let dotnet4 = 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\'
+endif
 let g:ildasm_assemblies = [
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\mscorlib.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\WindowsBase.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationCore.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\PresentationFramework.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Core.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Drawing.dll',
-  \ 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\System.Net.dll',
+  \ dotnet4 . 'mscorlib.dll',
+  \ dotnet4 . 'WindowsBase.dll',
+  \ dotnet4 . 'PresentationCore.dll',
+  \ dotnet4 . 'PresentationFramework.dll',
+  \ dotnet4 . 'System.Core.dll',
+  \ dotnet4 . 'System.dll',
+  \ dotnet4 . 'System.Drawing.dll',
+  \ dotnet4 . 'System.Net.dll',
   \ ]
 
 " jscomplete-vim
@@ -240,8 +242,16 @@ call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
 call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
 
 " cppapi-complete
-let g:cppapi_pre_omnifunc = 'omni#cpp#complete#Main'
-let g:cppapi_ignore_files = [ 'mfc' ]
+"let g:cppapi_pre_omnifunc = 'omni#cpp#complete#Main'
+"let g:cppapi_ignore_files = [ 'mfc' ]
+
+" eskk
+let g:eskk#directory = "~/.eskk"
+let g:eskk#dictionary = { 'path': "~/.skk-jisyo", 'sorted': 0, 'encoding': 'utf-8', }
+let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'encoding': 'euc-jp', }
+
+" dbg.vim
+let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -284,7 +294,6 @@ wincmd p | diffthis
 
 " タグファイル更新
 command! -nargs=* -complete=dir UpdateTags  :call UpdateTags(<f-args>)
-
 function! UpdateTags(arg)
   let pwd  = expand('%:p:h')
   exe 'cd '.a:arg
@@ -305,6 +314,14 @@ function! FlexTags(arg)
   let pwd  = expand('%:p:h')
   exe 'cd '.a:arg
   silent exe ":!start /MIN ctags -R --options=" . $vim . "\\vimfiles\astags "  . a:arg
+  exe 'cd '.pwd
+endfunction
+
+command! -nargs=* -complete=dir CsTags  :call CsTags(<f-args>)
+function! CsTags(arg)
+  let pwd  = expand('%:p:h')
+  exe 'cd '.a:arg
+  silent exe ":!start /MIN ctags -R --cs-kinds=+p --fields=+iaS --extra=+q " . a:arg
   exe 'cd '.pwd
 endfunction
 
