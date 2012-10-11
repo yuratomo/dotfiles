@@ -351,3 +351,6 @@ endf
 " ビジュアルモード選択した部分を*で検索
 vnoremap * "zy:let @/ = @z<CR>n
 
+" クリップボードにカレントファイル名をコピー
+command! -nargs=0 CopyPath     let @* = expand('%:p')
+
