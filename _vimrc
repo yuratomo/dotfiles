@@ -97,7 +97,7 @@ set cmdheight=1
 set nobackup
 set noswapfile
 set complete=.,w,b,u
-set tags+=../../tags,../tags,./tags;
+set tags+=tags;
 set concealcursor=n
 set completeopt=menuone
 set helplang=ja,en
@@ -185,22 +185,24 @@ else
   inoremap <script> <C-V> x<Esc><SID>Paste"_s
 endif
 
-" like a vimwiki
-if !isdirectory(expand('~\vimwiki\'))
-  call mkdir(expand('~\vimwiki\'))
-endif
-nnoremap \ww :<c-u>e ~\vimwiki\index.wiki<RETURN>:<c-u>setf markdown<RETURN>
-
 " quick open xxx
-exe 'nnoremap \vv :<c-u>e ' . expand('<sfile>') . '<RETURN>'
-nnoremap \cc :<c-u>CalendarH<RETURN>
-nnoremap \ss :<c-u>DbgShell<RETURN>
+nnoremap \ss :<c-u>QuickOpen shell<RETURN>
+nnoremap \ff :<c-u>QuickOpen filer<RETURN>
+nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
+nnoremap \ww :<c-u>QuickOpen wiki<RETURN>
 nnoremap \mm :<c-u>Lmru<RETURN>
-nnoremap \ff :<c-u>Lfiler<RETURN>
-nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
+nnoremap \cc :<c-u>CalendarH<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
+nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
+command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
+let s:show_quick_mode = {
+  \ 'shell' : { 'bufname':'dbg-1',      'cmd':':DbgShell'                 },
+  \ 'filer' : { 'bufname':'Lfiler-1',   'cmd':':Lfiler'                   },
+  \ 'wiki'  : { 'bufname':'index.wiki', 'cmd':'call EasyWiki()'           },
+  \ 'vimrc' : { 'bufname':'_vimrc',     'cmd':'edit ' . expand('<sfile>') },
+  \ }
 
 "---------------------------------------------------------------------------
 " Plugin settings
@@ -240,10 +242,6 @@ let g:Laltfile_mapping = []
 call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
 call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
 call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
-
-" cppapi-complete
-"let g:cppapi_pre_omnifunc = 'omni#cpp#complete#Main'
-"let g:cppapi_ignore_files = [ 'mfc' ]
 
 " eskk
 let g:eskk#directory = "~/.eskk"
@@ -353,4 +351,27 @@ vnoremap * "zy:let @/ = @z<CR>n
 
 " クリップボードにカレントファイル名をコピー
 command! -nargs=0 CopyPath     let @* = expand('%:p')
+
+" クイック表示
+function! QuickOpen(mode)
+  if bufexists(s:show_quick_mode[a:mode].bufname)
+    if bufname('%') == s:show_quick_mode[a:mode].bufname
+      b #
+    else
+      exe 'b ' . s:show_quick_mode[a:mode].bufname
+    endif
+  else
+    exec s:show_quick_mode[a:mode].cmd
+  endif
+endfunction
+
+" メモ
+function! EasyWiki()
+  if !isdirectory(expand('~\vimwiki\'))
+    call mkdir(expand('~\vimwiki\'))
+  endif
+
+  edit ~\vimwiki\index.wiki
+  setf markdown
+endfunction
 
