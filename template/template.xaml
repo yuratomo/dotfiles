@@ -1,0 +1,38 @@
+:if search('<+CURSOR+>')
+:  execute 'normal! "_da>'
+:endif
+:echo '1: Page'
+:echo '2: Window'
+:echo '3: UserControl'
+:echo '4: Application'
+:let no = input("select number:")
+:if no == "1"
+:  call append(line('.')-1, '<Page')
+:  call append(line('.')-1, '  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"')
+:  call append(line('.')-1, '  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">')
+:  call append(line('.')-1, '</Page>')
+:elseif no == "2"
+:  call append(line('.')-1, '<Window x:Class="xxx.<+file+>"')
+:  call append(line('.')-1, '    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"')
+:  call append(line('.')-1, '    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"')
+:  call append(line('.')-1, '	Title="<+file+>" Height="300" Width="300">')
+:  call append(line('.')-1, '</Window>')
+:elseif no == "3"
+:  call append(line('.')-1, '<UserControl x:Class="xxx.<+file+>"')
+:  call append(line('.')-1, '    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"')
+:  call append(line('.')-1, '    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">')
+:  call append(line('.')-1, '    <Grid>')
+:  call append(line('.')-1, '    </Grid>')
+:  call append(line('.')-1, '</UserControl>')
+:elseif no == "4"
+:  call append(line('.')-1, '<Application x:Class="WpfApplication1.App"')
+:  call append(line('.')-1, '             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"')
+:  call append(line('.')-1, '             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"')
+:  call append(line('.')-1, '             StartupUri="MainWindow.xaml">')
+:  call append(line('.')-1, '    <Application.Resources>')
+:  call append(line('.')-1, '    </Application.Resources>')
+:  call append(line('.')-1, '</Application>')
+:endif
+:%s/<+file+>/\=expand('%:t:r')/geI
+:%s/<+DATE+>/\=strftime('%Y-%m-%d')/ge
+

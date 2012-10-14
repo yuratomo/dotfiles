@@ -54,6 +54,9 @@ try
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
+  Bundle 'git://github.com/vim-scripts/vimwiki.git'
+  Bundle 'git://github.com/kana/vim-smartinput.git'
+  Bundle 'git://github.com/thinca/vim-template.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
@@ -189,18 +192,17 @@ endif
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
-nnoremap \ww :<c-u>QuickOpen wiki<RETURN>
 nnoremap \mm :<c-u>Lmru<RETURN>
 nnoremap \cc :<c-u>CalendarH<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
 nnoremap <F5> :<c-u>Back make<RETURN>
+"nnoremap \ww :<c-u>QuickOpen wiki<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
   \ 'shell' : { 'bufname':'dbg-1',      'cmd':':DbgShell'                 },
   \ 'filer' : { 'bufname':'Lfiler-1',   'cmd':':Lfiler'                   },
-  \ 'wiki'  : { 'bufname':'index.wiki', 'cmd':'call EasyWiki()'           },
   \ 'vimrc' : { 'bufname':'_vimrc',     'cmd':'edit ' . expand('<sfile>') },
   \ }
 
@@ -222,16 +224,18 @@ if has('win64')
 elseif has('win32')
   let dotnet4 = 'C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client\'
 endif
-let g:ildasm_assemblies = [
-  \ dotnet4 . 'mscorlib.dll',
-  \ dotnet4 . 'WindowsBase.dll',
-  \ dotnet4 . 'PresentationCore.dll',
-  \ dotnet4 . 'PresentationFramework.dll',
-  \ dotnet4 . 'System.Core.dll',
-  \ dotnet4 . 'System.dll',
-  \ dotnet4 . 'System.Drawing.dll',
-  \ dotnet4 . 'System.Net.dll',
-  \ ]
+if has('win32')
+  let g:ildasm_assemblies = [
+    \ dotnet4 . 'mscorlib.dll',
+    \ dotnet4 . 'WindowsBase.dll',
+    \ dotnet4 . 'PresentationCore.dll',
+    \ dotnet4 . 'PresentationFramework.dll',
+    \ dotnet4 . 'System.Core.dll',
+    \ dotnet4 . 'System.dll',
+    \ dotnet4 . 'System.Drawing.dll',
+    \ dotnet4 . 'System.Net.dll',
+    \ ]
+endif
 
 " jscomplete-vim
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
@@ -250,6 +254,7 @@ let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'enc
 
 " dbg.vim
 let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
+
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -365,13 +370,17 @@ function! QuickOpen(mode)
   endif
 endfunction
 
-" ÉÅÉÇ
-function! EasyWiki()
-  if !isdirectory(expand('~\vimwiki\'))
-    call mkdir(expand('~\vimwiki\'))
-  endif
+"ãÈå`ëIëÇÃI,A
+vnoremap <expr> I  <SID>force_blockwise_visual('I')
+vnoremap <expr> A  <SID>force_blockwise_visual('A')
 
-  edit ~\vimwiki\index.wiki
-  setf markdown
+function! s:force_blockwise_visual(next_key)
+  if mode() ==# 'v'
+    return "\<C-v>" . a:next_key
+  elseif mode() ==# 'V'
+    return "\<C-v>0o$" . a:next_key
+  else  " mode() ==# "\<C-v>"
+    return a:next_key
+  endif
 endfunction
 
