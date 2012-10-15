@@ -31,6 +31,6 @@ set mousehide
 colorscheme neon
 
 " クリックした単語をハイライト表示させる
-nnoremap <LeftRelease> :exe 'Lsearch ' . expand('<cword>')<RETURN>
+nnoremap <LeftRelease> :exe 'Lsearch \<' . expand('<cword>') . '\>'<RETURN>
 
 
