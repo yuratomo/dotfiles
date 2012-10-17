@@ -51,12 +51,11 @@ try
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
+  Bundle 'git://github.com/mattn/sonictemplate-vim.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
-  Bundle 'git://github.com/kana/vim-smartinput.git'
-  Bundle 'git://github.com/thinca/vim-template.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
@@ -69,6 +68,8 @@ try
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
+" Bundle 'git://github.com/kana/vim-smartinput.git'
+" Bundle 'git://github.com/thinca/vim-template.git'
 
   filetype plugin indent on
 catch /.*/
@@ -255,6 +256,10 @@ let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'enc
 " dbg.vim
 let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
+" sonictemplate
+let g:sonictemplate_vim_template_dir = [
+  \ '$HOME/.vim/bundle/dotfiles/template',
+  \]
 
 "---------------------------------------------------------------------------
 " Convenient scripts
