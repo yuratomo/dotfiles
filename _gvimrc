@@ -31,6 +31,15 @@ set mousehide
 colorscheme neon
 
 " クリックした単語をハイライト表示させる
-nnoremap <LeftRelease> :exe 'Lsearch \<' . expand('<cword>') . '\>'<RETURN>
+nnoremap <expr> <LeftRelease> <SID>click_hilight()
+
+function! s:click_hilight()
+  let word = expand('<cword>')
+  if !empty(word)
+      call Lsearch#Search(word)
+  else
+      call Lsearch#Clear()
+  endif
+endfunction
 
 
