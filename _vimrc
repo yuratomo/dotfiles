@@ -38,6 +38,7 @@
 " fsutil hardlink create _gvimrc .vim/bundle/dotfiles/_gvimrc
 " fsutil hardlink create c:/vim/vimrc_local.vim .vim/bundle/dotfiles/vimrc_local.vim
 " fsutil hardlink create c:/vim/gvimrc_local.vim .vim/bundle/dotfiles/gvimrc_local.vim
+" fsutil hardlink create _nya .vim/bundle/dotfiles/_nya
 "
 
 set nocompatible
@@ -52,10 +53,15 @@ try
   Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/mattn/sonictemplate-vim.git'
+  Bundle 'git://github.com/mattn/zencoding-vim.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
+  Bundle 'git://github.com/Shougo/vimshell.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
+ "Bundle 'git://github.com/Lokaltog/vim-powerline.git'
+  Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
+  Bundle 'git://github.com/tomasr/molokai.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
@@ -68,8 +74,6 @@ try
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
-" Bundle 'git://github.com/kana/vim-smartinput.git'
-" Bundle 'git://github.com/thinca/vim-template.git'
 
   filetype plugin indent on
 catch /.*/
@@ -106,6 +110,8 @@ set concealcursor=n
 set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
+set cursorline
+set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
 filetype indent plugin on
 
 "---------------------------------------------------------------------------
@@ -114,7 +120,7 @@ filetype indent plugin on
 au FileType vim        set sw=2 ts=2 sts=2 et
 au FileType c,cpp      set sw=4 ts=4 sts=4 noet
 au FileType java       set sw=4 ts=4 sts=4 noet
-au FileType cs         set sw=4 ts=4 sts=4 et
+au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
 au BufNewFile,BufRead *.build   setf ant
@@ -124,20 +130,22 @@ au BufNewFile,BufRead *.*proj   setf xml
 au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
 au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
-au BufNewFile,BufRead *.cs      setl bexpr=cs#balloon()
-au BufNewFile,BufRead *.cs      setl ballooneval
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
-au BufNewFile,BufRead *.java    setl bexpr=java#apiballoon()
-au BufNewFile,BufRead *.java    setl ballooneval
 au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
-au BufNewFile,BufRead *.cpp     setl bexpr=cppapi#balloon()
-au BufNewFile,BufRead *.cpp     setl ballooneval
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
-au BufNewFile,BufRead *.c       setl bexpr=cppapi#balloon()
-au BufNewFile,BufRead *.c       setl ballooneval
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
-au BufNewFile,BufRead *.h       setl bexpr=cppapi#balloon()
-au BufNewFile,BufRead *.h       setl ballooneval
+if has("balloon_eval") && has("balloon_multiline") 
+  au BufNewFile,BufRead *.cs    setl bexpr=cs#balloon()
+  au BufNewFile,BufRead *.java  setl bexpr=javaapi#balloon()
+  au BufNewFile,BufRead *.cpp   setl bexpr=cppapi#balloon()
+  au BufNewFile,BufRead *.c     setl bexpr=cppapi#balloon()
+  au BufNewFile,BufRead *.h     setl bexpr=cppapi#balloon()
+  au BufNewFile,BufRead *.cs    setl ballooneval
+  au BufNewFile,BufRead *.java  setl ballooneval
+  au BufNewFile,BufRead *.cpp   setl ballooneval
+  au BufNewFile,BufRead *.c     setl ballooneval
+  au BufNewFile,BufRead *.h     setl ballooneval
+endif
 
 "---------------------------------------------------------------------------
 " keymap
@@ -162,6 +170,9 @@ cnoremap <c-w> <c-f>
 " turn off IME when leave insert mode
 inoremap <ESC> <ESC>
 inoremap <C-[> <ESC>
+
+" quick nohlsearch
+noremap <Esc><Esc> :nohlsearch<CR><Esc>
 
 " like a browser
 nnoremap <space>   <C-D>M
@@ -189,6 +200,9 @@ else
   inoremap <script> <C-V> x<Esc><SID>Paste"_s
 endif
 
+" find word under the cursor
+nnoremap + <right>?<c-r><c-w><cr><c-o><left>
+
 " quick open xxx
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
@@ -198,7 +212,6 @@ nnoremap \cc :<c-u>CalendarH<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
 nnoremap <F5> :<c-u>Back make<RETURN>
-"nnoremap \ww :<c-u>QuickOpen wiki<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -215,9 +228,14 @@ let s:show_quick_mode = {
 let g:w3m#homepage = 'http://www.google.co.jp/'
 
 " vs.vim (WDK)
-let g:vs_wdk_cond = 'chk'
-let g:vs_wdk_cpu  = 'x86'
-let g:vs_wdk_os   = 'WXP'
+let g:vs_wdk_cond  = 'chk'
+if has('win64')
+  let g:vs_wdk_cpu = 'amd64'
+  let g:vs_wdk_os  = 'WIN7'
+else
+  let g:vs_wdk_cpu = 'x86'
+  let g:vs_wdk_os  = 'WXP'
+endif
 
 " ildasm
 if has('win64')
@@ -248,6 +266,12 @@ call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
 call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
 call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
 
+" Lfiler
+let g:loaded_netrwPlugin = "v140"
+
+" Lsearch
+noremap <c-h> :<c-u>call Lsearch#Search('\<' . expand('<cword>') . '\>')<RETURN>
+
 " eskk
 let g:eskk#directory = "~/.eskk"
 let g:eskk#dictionary = { 'path': "~/.skk-jisyo", 'sorted': 0, 'encoding': 'utf-8', }
@@ -260,13 +284,23 @@ let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 
 let g:sonictemplate_vim_template_dir = [
   \ '$HOME/.vim/bundle/dotfiles/template',
   \]
+inoremap <c-t> <c-o>:Template<space>
+
+" Powerline
+"let g:Powerline_colorscheme='my'
 
 "---------------------------------------------------------------------------
 " Convenient scripts
 "---------------------------------------------------------------------------
 
 " バッファ変更時にカレントディレクトリに移動する
-command! -nargs=0 CdCurrent cd %:p:h
+command! -nargs=0 CdCurrent :call CdCurrent()
+function! CdCurrent()
+  try
+    cd %:p:h
+  catch /.*/
+  endtry
+endfunc
 autocmd BufEnter * CdCurrent
 
 " 最後に編集した位置に移動する
@@ -339,22 +373,6 @@ function! s:GetBufferFileName()
   let path = expand('%:p')
   return path
 endfunction
-
-" ステータス拡張
-set statusline=%<%f\%{FileTime()}%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P%=%{CurTime()} 
-fu! FileTime() 
-  let ext=tolower(expand("%:e")) 
-  let fname=tolower(expand('%<')) 
-  let filename=fname . '.' . ext 
-  let msg="" 
-  let msg=msg." ".strftime("[Modified %Y/%b/%d %H:%M:%S]",getftime(filename)) 
-  return msg 
-endf 
-fu! CurTime() 
-  let ftime="" 
-  let ftime=ftime." ".strftime("[%y/%b/%d %H:%M:%S]") 
-  return ftime 
-endf 
 
 " ビジュアルモード選択した部分を*で検索
 vnoremap * "zy:let @/ = @z<CR>n

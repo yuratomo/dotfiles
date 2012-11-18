@@ -1,0 +1,247 @@
+#(English)
+#   This file _nya is the script NYAOS execute on starting up.
+#   NYAOS reads _nya(s) on these directories in the same order as written:
+#    (1) _nya on the same directory as NYAOS.EXE
+#    (2) %HOME%\_nya or %USERPROFILE%\_nya
+#    (3) The current directory
+# I recommend you to
+#    - put the original _nya on (1)
+#    - put your customized _nya on (2)
+#
+#(Japanese)
+# _nya は NYAOS の初期設定ファイルです.
+#   (1) NYAOS.EXE のあるディレクトリ
+#   (2) %HOME% の下(未定義であれば %USERPROFILE%)
+#   (3) カレントディレクトリ
+# にある _nya を「順に全て」呼び出します.
+# ※ ただし、(1)==(3) の場合等は、(3)を呼び出しません.
+#
+# 通常
+#    - NYAOS.EXE に添付の _nya (当ファイル) は (1) へ
+#    - そのユーザで定義する設定は (2) へ
+# 配置してください.
+
+if /%OS%/ == /Windows_NT/ then
+    alias  kill  taskkill /pid
+    alias  kill9 taskkill /f /pid
+    alias  ps    tasklist
+    suffix vbs   cscript //nologo
+    suffix js    cscript //nologo
+endif
+
+set EDITOR=gvim
+alias ex   explorer
+alias vi   c:\vim\vim.exe
+alias vim  c:\vim\vim.exe
+alias gvim c:\vim\gvim.exe
+alias wdk7chk  %comspec% /k C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x64 WIN7
+alias wdk7fre  %comspec% /k C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ fre x64 WIN7
+alias wdkXPchk %comspec% /k C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x86 WXP
+alias wdkXPfre %comspec% /k C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ fre x86 WXP
+alias cp       %comspec% /c copy
+alias mv       %comspec% /c move
+alias grep     findstr
+alias dev      %comspec% /c devmgmt.msc
+alias halt     shutdown -t 0 -s
+alias reboot   shutdown -t 0 -r
+alias gal      source ~\.nya\gal.lua
+alias gar      source ~\.nya\gar.lua
+alias xxx      cmdsource C:\WinDDK\7600.16385.1\bin\setenv.bat C:\WinDDK\7600.16385.1\ chk x64 WIN7
+
+suffix ny  nyaos -f
+suffix pl  perl
+suffix py  python
+suffix rb  ruby
+suffix jar java -jar
+suffix lua lua
+suffix awk awk -f
+
+option +backquote
+option +history
+option +nullcomplete
+option +tilde
+option +glob
+option prompt $p$g
+option uncompletechar ,;=``
+option ls_colors fi=37;1:di=34;1:sy=36;1:ro=31;1:hi=33;1:ex=32;1:ec=0
+
+foreach i (mkdir rmdir type md rd start mklink)
+    alias $i $COMSPEC /c $i
+end
+
+foreach cmd (dir copy move del rename ren del attrib)
+    $cmd{
+        if %glob.defined% -ne 0 then
+            option -glob
+            $COMSPEC /c $0 $*
+            option +glob
+        else
+            $COMSPEC /c $0 $*
+        endif
+    }
+end
+
+bindkey CTRL_SPACE ime-toggle
+bindkey CTRL_P vzlike-previous-history
+bindkey CTRL_N vzlike-next-history
+
+###
+bindkey ESCAPE xscript:start
+bindkey 107    xscript:previous
+bindkey 106    xscript:next
+bindkey 104    xscript:backward
+bindkey 108    xscript:forward
+bindkey 48     xscript:head
+bindkey 52     xscript:tail
+bindkey 75     xscript:previous
+bindkey 74     xscript:next
+bindkey 72     xscript:backward
+bindkey 76     xscript:forward
+bindkey 36     xscript:tail
+bindkey 121    xscript:copy
+bindkey CTRL_U xscript:previous-page
+bindkey CTRL_D xscript:next-page
+bindkey CTRL_V yank
+
+### Vzライクなキーバインドにする関数
+### 利用時には「vzbind」とだけの行を入れてください。
+vzbind{
+    bindkey CTRL_R xscript:start            xscript:pageup
+    bindkey CTRL_S backward                 xscript:backward
+    bindkey CTRL_D forward                  xscript:forward
+    bindkey CTRL_E vzlike-previous-history  xscript:previous
+    bindkey CTRL_X vzlike-next-history      xscript:next
+    bindkey CTRL_F forward-word
+    bindkey CTRL_A backward-word
+}
+# vzbind
+
+lua_e "
+    --- NYAOS 終了時のフック ---
+    function nyaos.goodbye.message()
+        print('Good bye !!')
+    end
+
+    -- キーフックサンプル --
+    -- (「nyaos.keyhook = sample_keyhook」で利用可能)
+    function sample_keyhook(t)
+        if t.key == nyaos.key.F1 then
+			return 27
+        end
+    end
+	nyaos.keyhook = sample_keyhook
+
+    -- コマンドラインフィルターサンプル:「$lua(…)」(括弧内はLua式) --
+    -- (「nyaos.filter.sample = sample_filter」で利用可能になる)
+    function sample_filter(cmdline)
+        return cmdline:gsub('$lua(%b())',function(m)
+            local status,result=pcall( loadstring('return '..m) )
+            if status then
+                return result
+            else
+                print('Ignore invalid Lua expression: '..m)
+                return false;
+            end
+        end)
+    end
+
+    --- which コマンド ---
+    function nyaos.command.which(cmd)
+        local path='.;' .. os.getenv('PATH')
+
+        --- 引数が無い場合は、PATH の一覧を表示するだけ ---
+        if not cmd or cmd:len()==0 then
+            for path1 in path:gmatch('[^;]+') do
+                print(path1)
+            end
+            return
+        end
+
+        local cmdl=cmd:lower()
+
+        --- エイリアスを検索 ---
+        local a=nyaos.alias[ cmdl ]
+        if a then
+            print('aliased as '..a)
+        end
+        --- 関数を検索 ---
+        local f=nyaos.functions[ cmdl ]
+        if f then
+            print('defined as function')
+        end
+
+        local variation={
+            [ cmdl ] = true ,
+            [ cmdl .. '.exe' ] = true ,
+            [ cmdl .. '.cmd' ] = true ,
+            [ cmdl .. '.bat' ] = true ,
+            [ cmdl .. '.com' ] = true
+        }
+        for key,val in pairs(nyaos.suffix) do
+            variation[ cmdl .. '.' .. key:lower() ] = true
+        end
+
+        for path1 in path:gmatch('[^;]+') do
+            for fname in nyaos.dir(path1) do
+                if variation[ fname:lower() ] then
+                    print( path1 .. '\\' .. fname )
+                end
+            end
+        end
+    end
+
+    -- 「-t」オプション付きで起動された時：
+    for i,e in pairs(nyaos.argv) do
+        if e == '-t' then
+            -- ls にカラーオプションを付ける --
+            nyaos.alias.ls = (nyaos.alias.ls or 'ls')..' --color -x'
+
+            if os.getenv('VIMSHELL') == '1' then
+                nyaos.option.ls_colors='fi=37:di=32:sy=31:ro=34:hi=33:ex=35:ec=0'
+                nyaos.option.prompt='$e[31m[$w]$_$$ $e[37m'
+                nyaos.option.term_clear = ''
+                nyaos.option.term_cursor_on = ''
+
+                function nyaos.command.complete_test(arg)
+                    local list=nyaos.default_complete(arg,1)
+                    for i=1,#list do
+                        print(list[i][2])
+                    end
+                end
+            else
+                nyaos.option.ls_colors='fi=30:di=32:sy=31:ro=34:hi=33:ex=35:ec=0'
+                nyaos.option.prompt='$e[31m[$w]$_$$ $e[30m'
+            end
+        end
+    end
+
+    function nyaos.command.cmdsource(...)
+        local arg={...}
+        if #arg < 1 then
+            print('usage: cmdsource BATCHFILENAME ARG...')
+            print('')
+            print('  the command which execute the batch-file')
+            print('  and load environment-variables defined on it.')
+            return
+        end
+        local tmpfile = os.tmpname()
+        tmpfile = table.concat({string.byte(tmpfile,1,tmpfile:len())})
+        for i=1,#arg do
+            if string.match(arg[i],' ') then
+                arg[i] = '\034'..arg[i]..'\034'
+            end
+        end
+
+        os.execute(table.concat(arg,' ')..' & set > '..tmpfile)
+
+        for line in io.lines( tmpfile ) do
+            local left,right = string.match(line,'([^=]+)=(.*)$')
+            if os.getenv(left) ~= right then
+                print('SET '..left..'='..right)
+                nyaos.exec('SET '..left..'='..right)
+            end
+        end
+
+        os.remove(tmpfile)
+    end
+"

@@ -27,8 +27,9 @@ set lines=42
 set mouse=a
 set nomousefocus
 set mousehide
+set cmdheight=1
 
-colorscheme neon
+colorscheme neon2
 
 " クリックした単語をハイライト表示させる
 nnoremap <expr> <LeftRelease> <SID>click_hilight()
@@ -43,3 +44,7 @@ function! s:click_hilight()
 endfunction
 
 
+"if has("win32")
+  "autocmd FocusGained * set transparency=255
+  "autocmd FocusLost   * set transparency=230
+"endif
