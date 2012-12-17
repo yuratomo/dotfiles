@@ -58,9 +58,10 @@ try
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/vimshell.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
+  Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
- "Bundle 'git://github.com/Lokaltog/vim-powerline.git'
   Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
+  Bundle 'git://github.com/vim-scripts/errormarker.vim.git'
   Bundle 'git://github.com/tomasr/molokai.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
@@ -201,14 +202,13 @@ else
 endif
 
 " find word under the cursor
-nnoremap + <right>?<c-r><c-w><cr><c-o><left>
+"nnoremap + <right>?<c-r><c-w><cr><c-o><left>
 
 " quick open xxx
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \mm :<c-u>Lmru<RETURN>
-nnoremap \cc :<c-u>CalendarH<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
 nnoremap <F5> :<c-u>Back make<RETURN>
@@ -286,8 +286,9 @@ let g:sonictemplate_vim_template_dir = [
   \]
 inoremap <c-t> <c-o>:Template<space>
 
-" Powerline
-"let g:Powerline_colorscheme='my'
+" EasyMotion
+let g:EasyMotion_mapping_j = '<C-j>'
+let g:EasyMotion_mapping_k = '<C-k>'
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -406,4 +407,17 @@ function! s:force_blockwise_visual(next_key)
     return a:next_key
   endif
 endfunction
+
+"カーソル行をBOLD、入力モードでBOLD解除、他のウィンドウでカーソル解除
+if has('syntax')
+  augroup InsertHook
+    autocmd! InsertHook
+    autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
+    autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
+    autocmd InsertEnter      * hi CursorLineNr guifg=WHITE guibg=RED  gui=BOLD
+    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE gui=NONE
+    autocmd WinLeave         * set nocursorline
+    autocmd WinEnter,BufRead * set cursorline
+  augroup END
+endif
 

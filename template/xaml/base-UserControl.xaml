@@ -1,7 +1,0 @@
-<UserControl x:Class="xxx.{{_name_}}"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Grid>
-    {{_name_}}
-  </Grid>
-</UserControl>

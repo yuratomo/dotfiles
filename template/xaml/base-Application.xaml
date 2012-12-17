@@ -1,8 +1,0 @@
-<Application x:Class="xxx.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="{{_name_}}.xaml">
-  <Application.Resources>
-    {{_cursor_}}
-  </Application.Resources>
-</Application>
