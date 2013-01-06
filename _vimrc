@@ -21,8 +21,8 @@
 "---------------------------------------------------------------------------
 " Vundle
 "---------------------------------------------------------------------------
-" cd ~/.vim
-" git clone git://github.com/gmarik/vundle.git
+" mkdir -p ~/.vim/bundle
+" git clone git://github.com/gmarik/vundle.git ~/.vim/bundle/vundle.git
 " cd ~/.vim/bundle
 " git clone git://github.com/yuratomo/dotfiles.git
 "
@@ -44,25 +44,28 @@
 set nocompatible
 
 try
-  filetype off
+  "filetype off
   set rtp+=~/.vim/vundle.git/
   call vundle#rc()
 
+"  Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
+"  Bundle 'git://github.com/vim-scripts/javacomplete.git'
+
+  Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/mattn/sonictemplate-vim.git'
   Bundle 'git://github.com/mattn/zencoding-vim.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
-  Bundle 'git://github.com/Shougo/vimshell.git'
+  Bundle 'git://github.com/Shougo/neosnippet.git'
+  Bundle 'git://github.com/Shougo/neocomplcache.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
-  Bundle 'git://github.com/Lokaltog/vim-easymotion.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
-  Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
-  Bundle 'git://github.com/vim-scripts/errormarker.vim.git'
   Bundle 'git://github.com/tomasr/molokai.git'
+  Bundle 'git://github.com/nanotech/jellybeans.vim.git'
+  Bundle 'git://github.com/t9md/vim-foldtext.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
@@ -75,6 +78,11 @@ try
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
+  Bundle 'git://github.com:yuratomo/java-api-javax.git'
+"  Bundle 'git://github.com:yuratomo/java-api-org.git'
+"  Bundle 'git://github.com:yuratomo/java-api-sun.git'
+  Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
+"  Bundle 'git://github.com:yuratomo/java-api-android.git'
 
   filetype plugin indent on
 catch /.*/
@@ -112,15 +120,17 @@ set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
 set cursorline
+set foldlevel=3
+set foldcolumn=1
+set foldmethod=indent
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
-filetype indent plugin on
 
 "---------------------------------------------------------------------------
 " autocommand
 "---------------------------------------------------------------------------
 au FileType vim        set sw=2 ts=2 sts=2 et
-au FileType c,cpp      set sw=4 ts=4 sts=4 noet
-au FileType java       set sw=4 ts=4 sts=4 noet
+au FileType c,cpp      set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
+au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
@@ -132,6 +142,7 @@ au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
 au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
+au CompleteDone *.java          call javaapi#showRef()
 au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
@@ -149,7 +160,7 @@ if has("balloon_eval") && has("balloon_multiline")
 endif
 
 "---------------------------------------------------------------------------
-" keymap
+" keymaps
 "---------------------------------------------------------------------------
 
 " like a emacs
@@ -200,6 +211,11 @@ if has("virtualedit")
 else
   inoremap <script> <C-V> x<Esc><SID>Paste"_s
 endif
+
+" neosnipet
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+"let g:neosnippet#snippets_directory = '~/.vim/bundle/snippets/'
 
 " find word under the cursor
 "nnoremap + <right>?<c-r><c-w><cr><c-o><left>
@@ -280,15 +296,12 @@ let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'enc
 " dbg.vim
 let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
-" sonictemplate
-let g:sonictemplate_vim_template_dir = [
-  \ '$HOME/.vim/bundle/dotfiles/template',
-  \]
-inoremap <c-t> <c-o>:Template<space>
+" java-api-complete
+inoremap <expr> <c-down> javaapi#nextRef()
+inoremap <expr> <c-up>   javaapi#prevRef()
 
-" EasyMotion
-let g:EasyMotion_mapping_j = '<C-j>'
-let g:EasyMotion_mapping_k = '<C-k>'
+" fold-method
+let g:Foldtext_enable = 1
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -332,39 +345,21 @@ function! DiffClip(reg) range
 endfunction
 
 " 変更前と変更中のバッファのdiffをとる
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis |
-wincmd p | diffthis
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
 " タグファイル更新
 command! -nargs=* -complete=dir UpdateTags  :call UpdateTags(<f-args>)
 function! UpdateTags(arg)
   let pwd  = expand('%:p:h')
   exe 'cd '.a:arg
-  silent exe ":!start /MIN ctags -R --c++-kinds=+p --fields=+iaS --extra=+q " . a:arg
-  exe 'cd '.pwd
-endfunction
-
-command! -nargs=* -complete=dir PhpTags     :call PhpTags(<f-args>)
-function! PhpTags(arg)
-  let pwd  = expand('%:p:h')
-  exe 'cd '.a:arg
-  silent exe ":!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
-  exe 'cd '.pwd
-endfunction
-
-command! -nargs=* -complete=dir FlexTags    :call FlexTags(<f-args>)
-function! FlexTags(arg)
-  let pwd  = expand('%:p:h')
-  exe 'cd '.a:arg
-  silent exe ":!start /MIN ctags -R --options=" . $vim . "\\vimfiles\astags "  . a:arg
-  exe 'cd '.pwd
-endfunction
-
-command! -nargs=* -complete=dir CsTags  :call CsTags(<f-args>)
-function! CsTags(arg)
-  let pwd  = expand('%:p:h')
-  exe 'cd '.a:arg
-  silent exe ":!start /MIN ctags -R --cs-kinds=+p --fields=+iaS --extra=+q " . a:arg
+  let ext = expand('%p:e')
+  if ext ==? 'php'
+    silent exe ":!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
+  elseif ext ==? 'as'
+    silent exe ":!start /MIN ctags -R --options=" . $vim . "\\vimfiles\astags "  . a:arg
+  else
+    silent exe ":!start /MIN ctags -R --cs-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q " . a:arg
+  endif
   exe 'cd '.pwd
 endfunction
 
@@ -394,7 +389,7 @@ function! QuickOpen(mode)
   endif
 endfunction
 
-"矩形選択のI,A
+" 矩形選択のI,A
 vnoremap <expr> I  <SID>force_blockwise_visual('I')
 vnoremap <expr> A  <SID>force_blockwise_visual('A')
 
@@ -414,10 +409,20 @@ if has('syntax')
     autocmd! InsertHook
     autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
     autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
-    autocmd InsertEnter      * hi CursorLineNr guifg=WHITE guibg=RED  gui=BOLD
-    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE gui=NONE
+    autocmd InsertEnter      * hi CursorLineNr guifg=BLUE  guibg=WHITE gui=BOLD
+    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE  gui=NONE
     autocmd WinLeave         * set nocursorline
     autocmd WinEnter,BufRead * set cursorline
   augroup END
 endif
+
+" 今開いているウィンドウを新しいタブで開きなおす
+command! OpenNewTab  :call OpenNewTab()
+function! OpenNewTab()
+  let l:f = expand("%:p")
+  if winnr('$') != 1 || tabpagenr('$') != 1
+    execute ":q"
+    execute ":tabnew ".l:f
+  endif
+endfunction
 
