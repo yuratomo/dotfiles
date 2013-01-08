@@ -65,7 +65,6 @@ try
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
   Bundle 'git://github.com/tomasr/molokai.git'
   Bundle 'git://github.com/nanotech/jellybeans.vim.git'
-  Bundle 'git://github.com/t9md/vim-foldtext.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
@@ -82,7 +81,7 @@ try
 "  Bundle 'git://github.com:yuratomo/java-api-org.git'
 "  Bundle 'git://github.com:yuratomo/java-api-sun.git'
   Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
-"  Bundle 'git://github.com:yuratomo/java-api-android.git'
+  Bundle 'git://github.com:yuratomo/java-api-android.git'
 
   filetype plugin indent on
 catch /.*/
@@ -120,16 +119,19 @@ set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
 set cursorline
-set foldlevel=3
+set foldlevel=999
 set foldcolumn=1
-set foldmethod=indent
+set foldmethod=expr
+set foldexpr=DoxygenFoldExpr()
+set foldtext=DoxygenFoldText()
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
+
 
 "---------------------------------------------------------------------------
 " autocommand
 "---------------------------------------------------------------------------
 au FileType vim        set sw=2 ts=2 sts=2 et
-au FileType c,cpp      set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
+au FileType c,cpp      set sw=4 ts=4 sts=4 noet 
 au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
@@ -300,9 +302,6 @@ let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 
 inoremap <expr> <c-down> javaapi#nextRef()
 inoremap <expr> <c-up>   javaapi#prevRef()
 
-" fold-method
-let g:Foldtext_enable = 1
-
 "---------------------------------------------------------------------------
 " Convenient scripts
 "---------------------------------------------------------------------------
@@ -426,3 +425,21 @@ function! OpenNewTab()
   endif
 endfunction
 
+" Doxygen‚ÌÜ‚è‚½‚½‚Ý
+function! DoxygenFoldExpr()
+    let line = getline(v:lnum)
+    if line =~ '/\*\*'
+        return ">1"
+    elseif line =~ '\s\*/$'
+        return "<1"
+    endif
+    return "="
+endfunction
+function! DoxygenFoldText()
+  for line in getline(v:foldstart, v:foldend)
+    if line =~ "@brief"
+      return line
+    endif
+  endfor
+  return getline(v:foldstart+1)
+endfunction
