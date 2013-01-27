@@ -27,6 +27,7 @@
 " git clone git://github.com/yuratomo/dotfiles.git
 "
 " (win 7)
+" mklink ~\.ctags ~\.vim\bundle\dotfiles\.ctags
 " mklink ~\_vimrc ~\.vim\bundle\dotfiles\_vimrc
 " mklink ~\_gvimrc ~\.vim\bundle\dotfiles\_gvimrc
 " mklink c:\vim\vimrc_local.vim .vim\bundle\dotfiles\vimrc_local.vim
@@ -34,6 +35,7 @@
 "
 " (win xp)
 " cd ~
+" fsutil hardlink create .ctags  .vim/bundle/dotfiles/.ctags
 " fsutil hardlink create _vimrc  .vim/bundle/dotfiles/_vimrc
 " fsutil hardlink create _gvimrc .vim/bundle/dotfiles/_gvimrc
 " fsutil hardlink create c:/vim/vimrc_local.vim .vim/bundle/dotfiles/vimrc_local.vim
@@ -60,7 +62,6 @@ try
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
-  Bundle 'git://github.com/Shougo/neocomplcache.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
   Bundle 'git://github.com/tomasr/molokai.git'
@@ -78,10 +79,11 @@ try
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-javax.git'
-"  Bundle 'git://github.com:yuratomo/java-api-org.git'
-"  Bundle 'git://github.com:yuratomo/java-api-sun.git'
+  Bundle 'git://github.com:yuratomo/java-api-org.git'
+  Bundle 'git://github.com:yuratomo/java-api-sun.git'
   Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
   Bundle 'git://github.com:yuratomo/java-api-android.git'
+  Bundle 'git://github.com:yuratomo/flex-api-complete.git'
 
   filetype plugin indent on
 catch /.*/
@@ -118,12 +120,13 @@ set concealcursor=n
 set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
-set cursorline
+"set cursorline
 set foldlevel=999
 set foldcolumn=1
-set foldmethod=expr
-set foldexpr=DoxygenFoldExpr()
-set foldtext=DoxygenFoldText()
+set foldmethod=indent
+"set foldmethod=expr
+"set foldexpr=DoxygenFoldExpr()
+"set foldtext=DoxygenFoldText()
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
 
 
@@ -136,6 +139,7 @@ au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
+au FileType php        setl omnifunc=phpcomplete#CompletePHP
 au BufNewFile,BufRead *.build   setf ant
 au BufNewFile,BufRead *.targets setf xml
 au BufNewFile,BufRead *.config  setf xml
@@ -143,11 +147,17 @@ au BufNewFile,BufRead *.*proj   setf xml
 au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
 au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
+au CompleteDone *.cs            call cs#showRef()
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
 au CompleteDone *.java          call javaapi#showRef()
+au BufNewFile,BufRead *.as      setl omnifunc=flexapi#complete
+au CompleteDone *.as            call flexapi#showRef()
+au BufNewFile,BufRead *.mxml    setf xml
+au BufNewFile,BufRead *.mxml    setl omnifunc=mxml#complete
 au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
+
 if has("balloon_eval") && has("balloon_multiline") 
   au BufNewFile,BufRead *.cs    setl bexpr=cs#balloon()
   au BufNewFile,BufRead *.java  setl bexpr=javaapi#balloon()
@@ -301,6 +311,13 @@ let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 
 " java-api-complete
 inoremap <expr> <c-down> javaapi#nextRef()
 inoremap <expr> <c-up>   javaapi#prevRef()
+let g:javaapi#delay_dirs = [
+  \ 'java-api-javax',
+  \ 'java-api-org',
+  \ 'java-api-sun',
+  \ 'java-api-servlet2.3',
+  \ 'java-api-android',
+  \ ]
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -355,7 +372,7 @@ function! UpdateTags(arg)
   if ext ==? 'php'
     silent exe ":!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
   elseif ext ==? 'as'
-    silent exe ":!start /MIN ctags -R --options=" . $vim . "\\vimfiles\astags "  . a:arg
+    silent exe ":!start /MIN ctags -R " . a:arg
   else
     silent exe ":!start /MIN ctags -R --cs-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q " . a:arg
   endif
@@ -403,17 +420,17 @@ function! s:force_blockwise_visual(next_key)
 endfunction
 
 "カーソル行をBOLD、入力モードでBOLD解除、他のウィンドウでカーソル解除
-if has('syntax')
-  augroup InsertHook
-    autocmd! InsertHook
-    autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
-    autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
-    autocmd InsertEnter      * hi CursorLineNr guifg=BLUE  guibg=WHITE gui=BOLD
-    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE  gui=NONE
-    autocmd WinLeave         * set nocursorline
-    autocmd WinEnter,BufRead * set cursorline
-  augroup END
-endif
+"if has('syntax')
+"  augroup InsertHook
+"    autocmd! InsertHook
+"    autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
+"    autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
+"    autocmd InsertEnter      * hi CursorLineNr guifg=BLUE  guibg=WHITE gui=BOLD
+"    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE  gui=NONE
+"    autocmd WinLeave         * set nocursorline
+"    autocmd WinEnter,BufRead * set cursorline
+"  augroup END
+"endif
 
 " 今開いているウィンドウを新しいタブで開きなおす
 command! OpenNewTab  :call OpenNewTab()
