@@ -51,14 +51,14 @@ try
   call vundle#rc()
 
 "  Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
-"  Bundle 'git://github.com/vim-scripts/javacomplete.git'
 
   Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
-  Bundle 'git://github.com/shawncplus/phpcomplete.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/mattn/zencoding-vim.git'
+  Bundle 'git://github.com/mattn/excitetranslate-vim.git'
+  Bundle 'git://github.com/mattn/webapi-vim.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
@@ -84,6 +84,7 @@ try
   Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
   Bundle 'git://github.com:yuratomo/java-api-android.git'
   Bundle 'git://github.com:yuratomo/flex-api-complete.git'
+  Bundle 'git://github.com:yuratomo/php-api-complete.git'
 
   filetype plugin indent on
 catch /.*/
@@ -120,6 +121,7 @@ set concealcursor=n
 set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
+set textwidth=0
 "set cursorline
 set foldlevel=999
 set foldcolumn=1
@@ -139,27 +141,40 @@ au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
-au FileType php        setl omnifunc=phpcomplete#CompletePHP
+au FileType php        setl omnifunc=phpapi#complete
+au FileType php        inoremap <expr> <c-down> phpapi#nextRef()
+au FileType php        inoremap <expr> <c-up>   phpapi#prevRef()
+
 au BufNewFile,BufRead *.build   setf ant
 au BufNewFile,BufRead *.targets setf xml
 au BufNewFile,BufRead *.config  setf xml
 au BufNewFile,BufRead *.*proj   setf xml
 au BufNewFile,BufRead *.xaml    setf xml
-au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
-au BufNewFile,BufRead *.cs      setl omnifunc=cs#complete
-au CompleteDone *.cs            call cs#showRef()
-au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
-au CompleteDone *.java          call javaapi#showRef()
-au BufNewFile,BufRead *.as      setl omnifunc=flexapi#complete
-au CompleteDone *.as            call flexapi#showRef()
+au BufNewFile,BufRead *.as      setf java
 au BufNewFile,BufRead *.mxml    setf xml
+
+au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
+au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
+au BufNewFile,BufRead *.cs      inoremap <expr> <c-down> dotnet#nextRef()
+au BufNewFile,BufRead *.cs      inoremap <expr> <c-up>   dotnet#prevRef()
+au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
+au BufNewFile,BufRead *.java    inoremap <expr> <c-down> javaapi#nextRef()
+au BufNewFile,BufRead *.java    inoremap <expr> <c-up>   javaapi#prevRef()
+au BufNewFile,BufRead *.as      setl omnifunc=flexapi#complete
+au BufNewFile,BufRead *.as      inoremap <expr> <c-down> flexapi#nextRef()
+au BufNewFile,BufRead *.as      inoremap <expr> <c-up>   flexapi#prevRef()
 au BufNewFile,BufRead *.mxml    setl omnifunc=mxml#complete
 au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
 
+au CompleteDone *.php           call phpapi#showRef()
+au CompleteDone *.cs            call dotnet#showRef()
+au CompleteDone *.java          call javaapi#showRef()
+au CompleteDone *.as            call flexapi#showRef()
+
 if has("balloon_eval") && has("balloon_multiline") 
-  au BufNewFile,BufRead *.cs    setl bexpr=cs#balloon()
+  au BufNewFile,BufRead *.cs    setl bexpr=dotnet#balloon()
   au BufNewFile,BufRead *.java  setl bexpr=javaapi#balloon()
   au BufNewFile,BufRead *.cpp   setl bexpr=cppapi#balloon()
   au BufNewFile,BufRead *.c     setl bexpr=cppapi#balloon()
@@ -255,6 +270,9 @@ let s:show_quick_mode = {
 " w3m
 let g:w3m#homepage = 'http://www.google.co.jp/'
 
+" gmail.vim
+let g:gmail_user_name = 'yura.tomo@gmail.com'
+
 " vs.vim (WDK)
 let g:vs_wdk_cond  = 'chk'
 if has('win64')
@@ -309,8 +327,6 @@ let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'enc
 let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
 " java-api-complete
-inoremap <expr> <c-down> javaapi#nextRef()
-inoremap <expr> <c-up>   javaapi#prevRef()
 let g:javaapi#delay_dirs = [
   \ 'java-api-javax',
   \ 'java-api-org',
@@ -368,11 +384,11 @@ command! -nargs=* -complete=dir UpdateTags  :call UpdateTags(<f-args>)
 function! UpdateTags(arg)
   let pwd  = expand('%:p:h')
   exe 'cd '.a:arg
-  let ext = expand('%p:e')
+  let ext = expand('%:p:e')
   if ext ==? 'php'
     silent exe ":!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
   elseif ext ==? 'as'
-    silent exe ":!start /MIN ctags -R " . a:arg
+    silent exe ":!start /MIN ctags -R --languages=actionscript " . a:arg
   else
     silent exe ":!start /MIN ctags -R --cs-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q " . a:arg
   endif
@@ -460,3 +476,20 @@ function! DoxygenFoldText()
   endfor
   return getline(v:foldstart+1)
 endfunction
+
+" 別ウィンドウを立ち上げてgrepする
+command! -nargs=* Grep :call GrepNewWindow(<f-args>)
+function! GrepNewWindow(...)
+  silent exe ':!start gvim -c "vimgrep ' . join(a:000, ' ') . '" -c cw -c "res 30" -c "set nowrap" -- ' . expand('%:p:h')
+endfunction
+
+" QuickFixウィンドウだけのマップ
+au BufRead,BufEnter * call MapForQuickFix()
+function! MapForQuickFix()
+  if &buftype=="quickfix"
+    nnoremap <buffer> <s-j>  j<CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
+    nnoremap <buffer> <s-k>  k<CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
+    nnoremap <buffer> <s-CR> <CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
+  endif
+endfunction
+
