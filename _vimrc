@@ -59,21 +59,26 @@ try
   Bundle 'git://github.com/mattn/zencoding-vim.git'
   Bundle 'git://github.com/mattn/excitetranslate-vim.git'
   Bundle 'git://github.com/mattn/webapi-vim.git'
+  Bundle 'git://github.com/mattn/httpstatus-vim.git'
   Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
+  Bundle 'git://github.com/basyura/TweetVim.git'
+  Bundle 'git://github.com/basyura/twibill.vim.git'
+  Bundle 'git://github.com/tyru/open-browser.vim.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
-  Bundle 'git://github.com/tomasr/molokai.git'
-  Bundle 'git://github.com/nanotech/jellybeans.vim.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
+  Bundle 'git://github.com:yuratomo/weather.vim.git'
   Bundle 'git://github.com:yuratomo/vs.vim.git'
   Bundle 'git://github.com:yuratomo/dbg.vim.git'
   Bundle 'git://github.com:yuratomo/bg.vim.git'
   Bundle 'git://github.com:yuratomo/neon.vim.git'
   Bundle 'git://github.com:yuratomo/gmail.vim.git'
+  Bundle 'git://github.com:yuratomo/gnews.vim.git'
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
+  Bundle 'git://github.com:yuratomo/winfiler.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
@@ -84,7 +89,13 @@ try
   Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
   Bundle 'git://github.com:yuratomo/java-api-android.git'
   Bundle 'git://github.com:yuratomo/flex-api-complete.git'
-  Bundle 'git://github.com:yuratomo/php-api-complete.git'
+  Bundle 'git://github.com:yuratomo/phpapi-complete.git'
+
+  Bundle 'git://github.com/nanotech/jellybeans.vim.git'
+  Bundle 'git://github.com/tomasr/molokai.git'
+  Bundle 'git://github.com/jonathanfilip/vim-lucius.git'
+  Bundle 'git://github.com/vim-scripts/twilight.git'
+
 
   filetype plugin indent on
 catch /.*/
@@ -224,6 +235,29 @@ inoremap <expr> <TAB>   pumvisible()?"\<c-n>":"\<TAB>"
 inoremap <expr> <s-TAB> pumvisible()?"\<c-p>":"\<s-TAB>"
 inoremap <c-space> <c-x><c-o><c-p>
 
+if has('gui')
+  " resize window
+  nnoremap <A-n> :execute 'set lines=' . (&lines + 1)<CR>
+  nnoremap <A-p> :execute 'set lines=' . (&lines - 1)<CR>
+  nnoremap <A-f> :execute 'set columns=' . (&columns + 5)<CR>
+  nnoremap <A-b> :execute 'set columns=' . (&columns - 5)<CR>
+
+  " move window
+  nnoremap <expr><A-j> MoveWindow(0,20)
+  nnoremap <expr><A-k> MoveWindow(0,-20)
+  nnoremap <expr><A-h> MoveWindow(-20,0)
+  nnoremap <expr><A-l> MoveWindow(20,0)
+  function! MoveWindow(w,h)
+    silent redir => pos
+      winpos
+    redir end
+    let parts = split(pos, "[: ,]")
+    let w = parts[-4]
+    let h = parts[-1]
+    silent exec ':winpos ' . (w+a:w) . ' ' . (h+a:h)
+  endfunction
+endif
+
 " like a windows clipboard (<c-c> and <c-v>)
 vnoremap <c-c> "*y
 if has("virtualedit")
@@ -273,6 +307,11 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 " gmail.vim
 let g:gmail_user_name = 'yura.tomo@gmail.com'
 
+" gnews
+let g:gnews#url = [
+  \ 'http://pipes.yahoo.com/pipes/pipe.run?_id=a1f4674ad9a307d54262ff8b600793f6&_render=json',
+  \ ]
+
 " vs.vim (WDK)
 let g:vs_wdk_cond  = 'chk'
 if has('win64')
@@ -311,6 +350,8 @@ let g:Laltfile_mapping = []
 call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
 call add(g:Laltfile_mapping, {'\.xaml.cs$'      : 'WPF.xaml'  } )
 call add(g:Laltfile_mapping, {'WPF.xaml$'       : 'SL.xaml'   } )
+call add(g:Laltfile_mapping, {'.mxml$'          : 'Cntl.as'   } )
+call add(g:Laltfile_mapping, {'Cntl.as$'        : '.mxml'     } )
 
 " Lfiler
 let g:loaded_netrwPlugin = "v140"
@@ -477,7 +518,7 @@ function! DoxygenFoldText()
   return getline(v:foldstart+1)
 endfunction
 
-" 別ウィンドウを立ち上げてgrepする
+" 別ウィンドウをvim立ち上げてvimgrepする
 command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
   silent exe ':!start gvim -c "vimgrep ' . join(a:000, ' ') . '" -c cw -c "res 30" -c "set nowrap" -- ' . expand('%:p:h')
@@ -492,4 +533,7 @@ function! MapForQuickFix()
     nnoremap <buffer> <s-CR> <CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
   endif
 endfunction
+
+" 別ウィンドウで開く
+command! -nargs=0 OpenNewWindow :silent !start gvim %
 
