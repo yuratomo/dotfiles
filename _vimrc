@@ -13,7 +13,7 @@
 "  https://github.com/mattn/jvgrep/downloads
 "
 " - w3m
-"  http://www.daionet.gr.jp/~knok/software/misc/
+"  http://hp.vector.co.jp/authors/VA052357/w3m_w32.html
 "
 " - diff
 "  http://gnuwin32.sourceforge.net/packages/diffutils.htm
@@ -50,23 +50,20 @@ try
   set rtp+=~/.vim/vundle.git/
   call vundle#rc()
 
-"  Bundle 'git://github.com/vim-scripts/colorsel.vim.git'
-
   Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
   Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/mattn/zencoding-vim.git'
   Bundle 'git://github.com/mattn/excitetranslate-vim.git'
   Bundle 'git://github.com/mattn/webapi-vim.git'
   Bundle 'git://github.com/mattn/httpstatus-vim.git'
-  Bundle 'git://github.com/Shougo/vimproc.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
   Bundle 'git://github.com/basyura/TweetVim.git'
   Bundle 'git://github.com/basyura/twibill.vim.git'
   Bundle 'git://github.com/tyru/open-browser.vim.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
+  Bundle 'git://github.com/tpope/vim-fugitive.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
   Bundle 'git://github.com:yuratomo/dotfiles.git'
   Bundle 'git://github.com:yuratomo/w3m.vim.git'
@@ -80,8 +77,11 @@ try
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/winfiler.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
+  Bundle 'git://github.com:yuratomo/neosnippet-defines.git'
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
+  Bundle 'git://github.com:yuratomo/cpp-api-windows.git'
+  Bundle 'git://github.com:yuratomo/cpp-api-ddk.git'
   Bundle 'git://github.com:yuratomo/java-api-complete.git'
   Bundle 'git://github.com:yuratomo/java-api-javax.git'
   Bundle 'git://github.com:yuratomo/java-api-org.git'
@@ -90,19 +90,14 @@ try
   Bundle 'git://github.com:yuratomo/java-api-android.git'
   Bundle 'git://github.com:yuratomo/flex-api-complete.git'
   Bundle 'git://github.com:yuratomo/phpapi-complete.git'
-
-  Bundle 'git://github.com/nanotech/jellybeans.vim.git'
-  Bundle 'git://github.com/tomasr/molokai.git'
-  Bundle 'git://github.com/jonathanfilip/vim-lucius.git'
-  Bundle 'git://github.com/vim-scripts/twilight.git'
-
+  Bundle 'git://github.com:yuratomo/perl-api-complete.git'
 
   filetype plugin indent on
 catch /.*/
 endtry
 
 if has('win32') && executable('jvgrep')
-  set grepprg=jvgrep
+  set grepprg=jvgrep\ --exclude\ \\.g\\.i\\.cs$\|\\.git$\|\\.svn$\|\\.o$\|\\.obj$\|\\.exe$\|\\.pdb$\|\\.dll$\|\\.ncb$\|\\.exp$\|\\.lib$\|\\.bak$\|^Debug$\|^Release$
 endif
 
 "---------------------------------------------------------------------------
@@ -133,13 +128,6 @@ set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
 set textwidth=0
-"set cursorline
-set foldlevel=999
-set foldcolumn=1
-set foldmethod=indent
-"set foldmethod=expr
-"set foldexpr=DoxygenFoldExpr()
-"set foldtext=DoxygenFoldText()
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
 
 
@@ -152,17 +140,22 @@ au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
+au FileType xaml       set sw=4 ts=4 sts=4 et
+au FileType xml        set sw=2 ts=2 sts=2 et
 au FileType php        setl omnifunc=phpapi#complete
 au FileType php        inoremap <expr> <c-down> phpapi#nextRef()
 au FileType php        inoremap <expr> <c-up>   phpapi#prevRef()
+au FileType perl       setl omnifunc=perlapi#complete
+au FileType perl       inoremap <expr> <c-down> perlapi#nextRef()
+au FileType perl       inoremap <expr> <c-up>   perlapi#prevRef()
 
 au BufNewFile,BufRead *.build   setf ant
 au BufNewFile,BufRead *.targets setf xml
 au BufNewFile,BufRead *.config  setf xml
 au BufNewFile,BufRead *.*proj   setf xml
-au BufNewFile,BufRead *.xaml    setf xml
 au BufNewFile,BufRead *.as      setf java
 au BufNewFile,BufRead *.mxml    setf xml
+au BufNewFile,BufRead *.xaml    setf xaml
 
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
 au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
@@ -179,10 +172,16 @@ au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
 
-au CompleteDone *.php           call phpapi#showRef()
-au CompleteDone *.cs            call dotnet#showRef()
-au CompleteDone *.java          call javaapi#showRef()
-au CompleteDone *.as            call flexapi#showRef()
+try
+  au CompleteDone *.php         call phpapi#showRef()
+  au CompleteDone *.pl          call perlapi#showRef()
+  au CompleteDone *.cs          call dotnet#showRef()
+  au CompleteDone *.java        call javaapi#showRef()
+  au CompleteDone *.as          call flexapi#showRef()
+  au CompleteDone *.cpp         call cppapi#showRef()
+  au CompleteDone *.cc          call cppapi#showRef()
+catch /.*/
+endtry
 
 if has("balloon_eval") && has("balloon_multiline") 
   au BufNewFile,BufRead *.cs    setl bexpr=dotnet#balloon()
@@ -276,7 +275,9 @@ endif
 " neosnipet
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-"let g:neosnippet#snippets_directory = '~/.vim/bundle/snippets/'
+let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
+let g:neosnippet#snippets_directory = '~/.vim/bundle/neosnippet-defines/snippets/'
+au BufNewFile,BufRead * setl completefunc=neosnippet#complete
 
 " find word under the cursor
 "nnoremap + <right>?<c-r><c-w><cr><c-o><left>
@@ -285,9 +286,8 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
-nnoremap \mm :<c-u>Lmru<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
-nnoremap \gg :<c-u>Back grep /s  *<LEFT><LEFT>
+nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
@@ -306,6 +306,8 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 
 " gmail.vim
 let g:gmail_user_name = 'yura.tomo@gmail.com'
+let g:gmail_mailbox_trash = "[Gmail]/ゴミ箱"
+let g:gmail_show_log_window = 1
 
 " gnews
 let g:gnews#url = [
@@ -376,6 +378,19 @@ let g:javaapi#delay_dirs = [
   \ 'java-api-android',
   \ ]
 
+" cpp-api-complete
+let g:cppapi#delay_dirs = [
+  \ 'cpp-api-windows',
+  \ 'cpp-api-ddk',
+  \ ]
+
+" calendar.vim
+let g:calendar_google_calendar = 1
+let g:calendar_google_task = 1
+
+" colorise
+"let g:colorizer_startup = 1
+
 "---------------------------------------------------------------------------
 " Convenient scripts
 "---------------------------------------------------------------------------
@@ -427,7 +442,7 @@ function! UpdateTags(arg)
   exe 'cd '.a:arg
   let ext = expand('%:p:e')
   if ext ==? 'php'
-    silent exe ":!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
+    silent exe ':!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
   elseif ext ==? 'as'
     silent exe ":!start /MIN ctags -R --languages=actionscript " . a:arg
   else
@@ -447,7 +462,10 @@ endfunction
 vnoremap * "zy:let @/ = @z<CR>n
 
 " クリップボードにカレントファイル名をコピー
-command! -nargs=0 CopyPath     let @* = expand('%:p')
+command! -nargs=0 CopyClip let @* = expand('%:p')
+
+" クリップボードのファイルを開く
+command! -nargs=0 EditClip exec 'edit '. @*
 
 " クイック表示
 function! QuickOpen(mode)
