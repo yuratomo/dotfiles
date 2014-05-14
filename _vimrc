@@ -77,6 +77,7 @@ try
   Bundle 'git://github.com:yuratomo/ltools.vim.git'
   Bundle 'git://github.com:yuratomo/winfiler.git'
   Bundle 'git://github.com:yuratomo/ildasm.vim.git'
+  Bundle 'git://github.com:yuratomo/javap.vim.git'
   Bundle 'git://github.com:yuratomo/neosnippet-defines.git'
   Bundle 'git://github.com:yuratomo/dotnet-complete.git'
   Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
@@ -88,9 +89,13 @@ try
   Bundle 'git://github.com:yuratomo/java-api-sun.git'
   Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
   Bundle 'git://github.com:yuratomo/java-api-android.git'
+  Bundle 'git://github.com:yuratomo/java-api-junit.git'
   Bundle 'git://github.com:yuratomo/flex-api-complete.git'
   Bundle 'git://github.com:yuratomo/phpapi-complete.git'
   Bundle 'git://github.com:yuratomo/perl-api-complete.git'
+  Bundle 'git://github.com:yuratomo/html5-complete.git'
+  Bundle 'git://github.com:yuratomo/css3-complete.git'
+  Bundle 'git://github.com:yuratomo/ant-complete.git'
 
   filetype plugin indent on
 catch /.*/
@@ -171,6 +176,18 @@ au BufNewFile,BufRead *.mxml    setl omnifunc=mxml#complete
 au BufNewFile,BufRead *.cpp     setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.c       setl omnifunc=cppapi#complete
 au BufNewFile,BufRead *.h       setl omnifunc=cppapi#complete
+au BufNewFile,BufRead *.html    setl omnifunc=html5#complete
+au BufNewFile,BufRead *.html    inoremap <expr> <c-down> html5#nextRef()
+au BufNewFile,BufRead *.html    inoremap <expr> <c-up>   html5#prevRef()
+au BufNewFile,BufRead *.css     setl omnifunc=css3#complete
+au BufNewFile,BufRead build.xml setl omnifunc=ant#complete
+"au BufNewFile,BufRead *.css     setl omnifunc=csscomplete#CompleteCSS
+
+augroup xaml
+  au!
+  autocmd Filetype xml,xaml,mxml,html inoremap <buffer> </ </<C-x><C-o>
+  autocmd Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
+augroup END
 
 try
   au CompleteDone *.php         call phpapi#showRef()
@@ -183,18 +200,18 @@ try
 catch /.*/
 endtry
 
-if has("balloon_eval") && has("balloon_multiline") 
-  au BufNewFile,BufRead *.cs    setl bexpr=dotnet#balloon()
-  au BufNewFile,BufRead *.java  setl bexpr=javaapi#balloon()
-  au BufNewFile,BufRead *.cpp   setl bexpr=cppapi#balloon()
-  au BufNewFile,BufRead *.c     setl bexpr=cppapi#balloon()
-  au BufNewFile,BufRead *.h     setl bexpr=cppapi#balloon()
-  au BufNewFile,BufRead *.cs    setl ballooneval
-  au BufNewFile,BufRead *.java  setl ballooneval
-  au BufNewFile,BufRead *.cpp   setl ballooneval
-  au BufNewFile,BufRead *.c     setl ballooneval
-  au BufNewFile,BufRead *.h     setl ballooneval
-endif
+"if has("balloon_eval") && has("balloon_multiline") 
+"  au BufNewFile,BufRead *.cs    setl bexpr=dotnet#balloon()
+"  au BufNewFile,BufRead *.java  setl bexpr=javaapi#balloon()
+"  au BufNewFile,BufRead *.cpp   setl bexpr=cppapi#balloon()
+"  au BufNewFile,BufRead *.c     setl bexpr=cppapi#balloon()
+"  au BufNewFile,BufRead *.h     setl bexpr=cppapi#balloon()
+"  au BufNewFile,BufRead *.cs    setl ballooneval
+"  au BufNewFile,BufRead *.java  setl ballooneval
+"  au BufNewFile,BufRead *.cpp   setl ballooneval
+"  au BufNewFile,BufRead *.c     setl ballooneval
+"  au BufNewFile,BufRead *.h     setl ballooneval
+"endif
 
 "---------------------------------------------------------------------------
 " keymaps
@@ -309,6 +326,9 @@ let g:gmail_user_name = 'yura.tomo@gmail.com'
 let g:gmail_mailbox_trash = "[Gmail]/ÉSÉ~î†"
 let g:gmail_show_log_window = 1
 
+" ltools
+let g:Lmru_max_count = 10000
+
 " gnews
 let g:gnews#url = [
   \ 'http://pipes.yahoo.com/pipes/pipe.run?_id=a1f4674ad9a307d54262ff8b600793f6&_render=json',
@@ -342,6 +362,12 @@ if has('win32')
     \ dotnet4 . 'System.Net.dll',
     \ ]
 endif
+
+" javap
+let g:javap_jars = [
+  \ $JAVA_HOME . '/jre/lib/rt.jar',
+  \ 'c:/home/jar2vim/android.jar',
+  \ ]
 
 " jscomplete-vim
 autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
