@@ -33,15 +33,6 @@
 " mklink c:\vim\vimrc_local.vim .vim\bundle\dotfiles\vimrc_local.vim
 " mklink c:\vim\gvimrc_local.vim .vim\bundle\dotfiles\gvimrc_local.vim
 "
-" (win xp)
-" cd ~
-" fsutil hardlink create .ctags  .vim/bundle/dotfiles/.ctags
-" fsutil hardlink create _vimrc  .vim/bundle/dotfiles/_vimrc
-" fsutil hardlink create _gvimrc .vim/bundle/dotfiles/_gvimrc
-" fsutil hardlink create c:/vim/vimrc_local.vim .vim/bundle/dotfiles/vimrc_local.vim
-" fsutil hardlink create c:/vim/gvimrc_local.vim .vim/bundle/dotfiles/gvimrc_local.vim
-" fsutil hardlink create _nya .vim/bundle/dotfiles/_nya
-"
 
 set nocompatible
 
@@ -59,43 +50,44 @@ try
   Bundle 'git://github.com/mattn/httpstatus-vim.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
+  Bundle 'git://github.com/Shougo/vimproc.vim.git'
   Bundle 'git://github.com/basyura/TweetVim.git'
   Bundle 'git://github.com/basyura/twibill.vim.git'
   Bundle 'git://github.com/tyru/open-browser.vim.git'
   Bundle 'git://github.com/tyru/eskk.vim.git'
   Bundle 'git://github.com/tpope/vim-fugitive.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
-  Bundle 'git://github.com:yuratomo/dotfiles.git'
-  Bundle 'git://github.com:yuratomo/w3m.vim.git'
-  Bundle 'git://github.com:yuratomo/weather.vim.git'
-  Bundle 'git://github.com:yuratomo/vs.vim.git'
-  Bundle 'git://github.com:yuratomo/dbg.vim.git'
-  Bundle 'git://github.com:yuratomo/bg.vim.git'
-  Bundle 'git://github.com:yuratomo/neon.vim.git'
-  Bundle 'git://github.com:yuratomo/gmail.vim.git'
-  Bundle 'git://github.com:yuratomo/gnews.vim.git'
-  Bundle 'git://github.com:yuratomo/ltools.vim.git'
-  Bundle 'git://github.com:yuratomo/winfiler.git'
-  Bundle 'git://github.com:yuratomo/ildasm.vim.git'
-  Bundle 'git://github.com:yuratomo/javap.vim.git'
-  Bundle 'git://github.com:yuratomo/neosnippet-defines.git'
-  Bundle 'git://github.com:yuratomo/dotnet-complete.git'
-  Bundle 'git://github.com:yuratomo/cpp-api-complete.git'
-  Bundle 'git://github.com:yuratomo/cpp-api-windows.git'
-  Bundle 'git://github.com:yuratomo/cpp-api-ddk.git'
-  Bundle 'git://github.com:yuratomo/java-api-complete.git'
-  Bundle 'git://github.com:yuratomo/java-api-javax.git'
-  Bundle 'git://github.com:yuratomo/java-api-org.git'
-  Bundle 'git://github.com:yuratomo/java-api-sun.git'
-  Bundle 'git://github.com:yuratomo/java-api-servlet2.3.git'
-  Bundle 'git://github.com:yuratomo/java-api-android.git'
-  Bundle 'git://github.com:yuratomo/java-api-junit.git'
-  Bundle 'git://github.com:yuratomo/flex-api-complete.git'
-  Bundle 'git://github.com:yuratomo/phpapi-complete.git'
-  Bundle 'git://github.com:yuratomo/perl-api-complete.git'
-  Bundle 'git://github.com:yuratomo/html5-complete.git'
-  Bundle 'git://github.com:yuratomo/css3-complete.git'
-  Bundle 'git://github.com:yuratomo/ant-complete.git'
+  Bundle 'git://github.com/yuratomo/dotfiles.git'
+  Bundle 'git://github.com/yuratomo/w3m.vim.git'
+  Bundle 'git://github.com/yuratomo/weather.vim.git'
+  Bundle 'git://github.com/yuratomo/vs.vim.git'
+  Bundle 'git://github.com/yuratomo/dbg.vim.git'
+  Bundle 'git://github.com/yuratomo/bg.vim.git'
+  Bundle 'git://github.com/yuratomo/neon.vim.git'
+  Bundle 'git://github.com/yuratomo/gmail.vim.git'
+  Bundle 'git://github.com/yuratomo/gnews.vim.git'
+  Bundle 'git://github.com/yuratomo/ltools.vim.git'
+  Bundle 'git://github.com/yuratomo/winfiler.git'
+  Bundle 'git://github.com/yuratomo/ildasm.vim.git'
+  Bundle 'git://github.com/yuratomo/javap.vim.git'
+  Bundle 'git://github.com/yuratomo/neosnippet-defines.git'
+  Bundle 'git://github.com/yuratomo/dotnet-complete.git'
+  Bundle 'git://github.com/yuratomo/cpp-api-complete.git'
+  Bundle 'git://github.com/yuratomo/cpp-api-windows.git'
+  Bundle 'git://github.com/yuratomo/cpp-api-ddk.git'
+  Bundle 'git://github.com/yuratomo/java-api-complete.git'
+  Bundle 'git://github.com/yuratomo/java-api-javax.git'
+  Bundle 'git://github.com/yuratomo/java-api-org.git'
+  Bundle 'git://github.com/yuratomo/java-api-sun.git'
+  Bundle 'git://github.com/yuratomo/java-api-servlet2.3.git'
+  Bundle 'git://github.com/yuratomo/java-api-android.git'
+  Bundle 'git://github.com/yuratomo/java-api-junit.git'
+  Bundle 'git://github.com/yuratomo/flex-api-complete.git'
+  Bundle 'git://github.com/yuratomo/phpapi-complete.git'
+  Bundle 'git://github.com/yuratomo/perl-api-complete.git'
+  Bundle 'git://github.com/yuratomo/html5-complete.git'
+  Bundle 'git://github.com/yuratomo/css3-complete.git'
+  Bundle 'git://github.com/yuratomo/ant-complete.git'
 
   filetype plugin indent on
 catch /.*/
@@ -305,6 +297,7 @@ nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
+nnoremap <F3> :<c-u>exe 'cd ' . readfile(expand("~/.grep_base"))[0]<RETURN>:<c-u>cfile ~/.grep_list \| cw<RETURN>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
@@ -324,7 +317,7 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 " gmail.vim
 let g:gmail_user_name = 'yura.tomo@gmail.com'
 let g:gmail_mailbox_trash = "[Gmail]/ÉSÉ~î†"
-let g:gmail_show_log_window = 1
+"let g:gmail_show_log_window = 1
 
 " ltools
 let g:Lmru_max_count = 10000
@@ -364,9 +357,17 @@ if has('win32')
 endif
 
 " javap
-let g:javap_jars = [
-  \ $JAVA_HOME . '/jre/lib/rt.jar',
-  \ 'c:/home/jar2vim/android.jar',
+let g:javap_defines = [
+  \ { 'jar'     : $JAVA_HOME . '/jre/lib/rt.jar',
+  \   'javadoc' : 'http://docs.oracle.com/javase/jp/6/api/%s.html' }, 
+  \ { 'jar'     : 'c:\xampp\tomcat\lib\servlet-api.jar',
+  \   'javadoc' : 'http://www.jajakarta.org/tomcat/servletapi/servletapi-4.0/docs-ja/%s.html' },
+  \ { 'jar'     : $AXIS2_HOME . '/lib/axis2-kernel-1.6.1.jar',
+  \   'javadoc' : 'http://axis.apache.org/axis2/java/core/api/%s.html' },
+  \ { 'jar'     : $AXIS2_HOME . '/lib/log4j-1.2.15.jar',
+  \   'javadoc' : 'http://logging.apache.org/log4j/1.2/apidocs/%s.html' },
+  \ { 'jar'     : $ANDROID_HOME . '/libs/android.jar',
+  \   'javadoc' : 'http://developer.android.com/reference/%s.html' },
   \ ]
 
 " jscomplete-vim
@@ -385,7 +386,7 @@ call add(g:Laltfile_mapping, {'Cntl.as$'        : '.mxml'     } )
 let g:loaded_netrwPlugin = "v140"
 
 " Lsearch
-noremap <c-h> :<c-u>call Lsearch#Search('\<' . expand('<cword>') . '\>')<RETURN>
+"noremap <c-h> :<c-u>call Lsearch#Search('\<' . expand('<cword>') . '\>')<RETURN>
 
 " eskk
 let g:eskk#directory = "~/.eskk"

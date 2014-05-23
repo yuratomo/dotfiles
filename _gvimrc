@@ -2,10 +2,12 @@
 
 " フォント設定
 if has('win32')
-  set guifont=ＭＳ_ゴシック:h8:cSHIFTJIS
+  "set guifont=ＭＳ_ゴシック:h8:cSHIFTJIS
+  set guifont=MS_Gothic:h8:cSHIFTJIS
   set linespace=-1
   if has('printer')
-    set printfont=ＭＳ_ゴシック:h8:cSHIFTJIS
+    "set printfont=ＭＳ_ゴシック:h8:cSHIFTJIS
+    set printfont=MS_Gothic:h8:cSHIFTJIS
   endif
 endif
 
