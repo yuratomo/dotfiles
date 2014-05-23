@@ -12,6 +12,20 @@ function gre()
 	jvgrep $* | tee ~/.grep_list
 }
 
+# カレントディレクトリをクリップボードに
+function sc()
+{
+	tmp=${PWD/\//}
+	echo ${tmp/\//:\/} | clip.exe
+}
+
+# クリップボードをカレントディレクトリに
+function gc()
+{
+	tmp=`cat /dev/clipboard`
+	cd $tmp
+}
+
 # ぎゃる＆ぎゃー
 #  gal 左窓のパスに移動
 #  gar 右窓のパスに移動
