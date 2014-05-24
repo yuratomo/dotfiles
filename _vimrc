@@ -489,10 +489,16 @@ endfunction
 vnoremap * "zy:let @/ = @z<CR>n
 
 " クリップボードにカレントファイル名をコピー
-command! -nargs=0 CopyClip let @* = expand('%:p')
+command! -nargs=0 Gp let @* = expand('%:p')
+cabbrev gp Gp
+
+" クリップボードにカレントフォルダをコピー
+command! -nargs=0 Gd let @* = expand('%:p:h')
+cabbrev gd Gd
 
 " クリップボードのファイルを開く
-command! -nargs=0 EditClip exec 'edit '. @*
+command! -nargs=0 Sd exec 'edit '. @*
+cabbrev sd Sd
 
 " クイック表示
 function! QuickOpen(mode)

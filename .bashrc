@@ -13,14 +13,14 @@ function gre()
 }
 
 # カレントディレクトリをクリップボードに
-function sc()
+function gd()
 {
 	tmp=${PWD/\//}
 	echo ${tmp/\//:\/} | clip.exe
 }
 
 # クリップボードをカレントディレクトリに
-function gc()
+function sd()
 {
 	tmp=`cat /dev/clipboard`
 	cd $tmp
