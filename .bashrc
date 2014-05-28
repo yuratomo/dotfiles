@@ -8,7 +8,7 @@ alias bundle='cd ~/.vim/bundle'
 jvgrep_opt="--exclude \.g\.i\.cs$|\.git$|\.svn$|\.o$|\.obj$|\.exe$|\.pdb$|\.dll$|\.ncb$|\.exp$|\.lib$|\.bak$|^Debug$|^Release"
 
 # jvgrep and tee
-function gre()
+function Grep()
 {
 	tmp=${PWD/\//}
 	echo ${tmp/\//:\/} > ~/.grep_base
