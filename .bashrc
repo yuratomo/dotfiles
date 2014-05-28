@@ -3,6 +3,7 @@ alias ll='ls -FCa --color -l'
 alias vim='vim.exe -cur_console:h0'
 alias gitdiff='git difftool --tool=vimdiff --no-prompt'
 alias bashrc='vim ~/.bashrc'
+alias bundle='cd ~/.vim/bundle'
 
 jvgrep_opt="--exclude \.g\.i\.cs$|\.git$|\.svn$|\.o$|\.obj$|\.exe$|\.pdb$|\.dll$|\.ncb$|\.exp$|\.lib$|\.bak$|^Debug$|^Release"
 
