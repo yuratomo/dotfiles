@@ -43,7 +43,6 @@ try
 
   Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
-  Bundle 'git://github.com/teramako/jscomplete-vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/mattn/excitetranslate-vim.git'
   Bundle 'git://github.com/mattn/webapi-vim.git'
@@ -51,11 +50,6 @@ try
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
   Bundle 'git://github.com/Shougo/vimproc.vim.git'
-  Bundle 'git://github.com/basyura/TweetVim.git'
-  Bundle 'git://github.com/basyura/twibill.vim.git'
-  Bundle 'git://github.com/tyru/open-browser.vim.git'
-  Bundle 'git://github.com/tyru/eskk.vim.git'
-  Bundle 'git://github.com/tpope/vim-fugitive.git'
   Bundle 'git://github.com/vim-scripts/vimwiki.git'
   Bundle 'git://github.com/yuratomo/dotfiles.git'
   Bundle 'git://github.com/yuratomo/w3m.vim.git'
@@ -297,7 +291,6 @@ nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
-nnoremap <F3> :<c-u>exe 'cd ' . readfile(expand("~/.grep_base"))[0]<RETURN>:<c-u>cfile ~/.grep_list \| cw<RETURN>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
@@ -385,14 +378,6 @@ call add(g:Laltfile_mapping, {'Cntl.as$'        : '.mxml'     } )
 " Lfiler
 let g:loaded_netrwPlugin = "v140"
 
-" Lsearch
-"noremap <c-h> :<c-u>call Lsearch#Search('\<' . expand('<cword>') . '\>')<RETURN>
-
-" eskk
-let g:eskk#directory = "~/.eskk"
-let g:eskk#dictionary = { 'path': "~/.skk-jisyo", 'sorted': 0, 'encoding': 'utf-8', }
-let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.L", 'sorted': 1, 'encoding': 'euc-jp', }
-
 " dbg.vim
 let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
@@ -410,10 +395,6 @@ let g:cppapi#delay_dirs = [
   \ 'cpp-api-windows',
   \ 'cpp-api-ddk',
   \ ]
-
-" calendar.vim
-let g:calendar_google_calendar = 1
-let g:calendar_google_task = 1
 
 " colorise
 "let g:colorizer_startup = 1
@@ -550,29 +531,25 @@ function! OpenNewTab()
   endif
 endfunction
 
-" Doxygenの折りたたみ
-function! DoxygenFoldExpr()
-    let line = getline(v:lnum)
-    if line =~ '/\*\*'
-        return ">1"
-    elseif line =~ '\s\*/$'
-        return "<1"
-    endif
-    return "="
-endfunction
-function! DoxygenFoldText()
-  for line in getline(v:foldstart, v:foldend)
-    if line =~ "@brief"
-      return line
-    endif
-  endfor
-  return getline(v:foldstart+1)
-endfunction
-
-" 別ウィンドウをvim立ち上げてvimgrepする
+" バックグラウンドでgrepさせる
 command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
-  silent exe ':!start gvim -c "vimgrep ' . join(a:000, ' ') . '" -c cw -c "res 30" -c "set nowrap" -- ' . expand('%:p:h')
+  let g:grep_base = expand('%:p:h')
+  let g:grep_str  = a:000[0]
+  let opt = '--exclude .g.i.cs$^|\.git$^|\.svn$^|.o$^|.obj$^|.exe$^|.pdb$^|.dll$^|.ncb$^|.exp$^|.lib$^|.bak$^|^Debug$^|^Release$'
+  exe ':!start cmd /c "jvgrep ' . opt . ' ' . join(a:000, ' ') . '" | tee ' . expand('~') . '/.grep_list'
+  "silent exe ':!start gvim -c "vimgrep ' . join(a:000, ' ') . '" -c cw -c "res 30" -c "set nowrap" -- ' . expand('%:p:h')
+endfunction
+
+"nnoremap <F3> :<c-u>exe 'cd ' . g:grep_base<RETURN>:<c-u>cfile ~/.grep_list \| cw<RETURN>:<c-u>exe 'LSearch ' . g:grep_str<RETURN>
+nnoremap <F3> :GrepResult<RETURN>
+command! -nargs=0 GrepResult :call GrepResult()
+function! GrepResult()
+  exe 'cd "' . g:grep_base . '"'
+  cfile ~/.grep_list
+  cw
+  call Lsearch#Clear()
+  call Lsearch#Search(g:grep_str)
 endfunction
 
 " QuickFixウィンドウだけのマップ

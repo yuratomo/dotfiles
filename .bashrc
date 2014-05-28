@@ -4,19 +4,26 @@ alias vim='vim.exe -cur_console:h0'
 alias gitdiff='git difftool --tool=vimdiff --no-prompt'
 alias bashrc='vim ~/.bashrc'
 
+jvgrep_opt="--exclude \.g\.i\.cs$|\.git$|\.svn$|\.o$|\.obj$|\.exe$|\.pdb$|\.dll$|\.ncb$|\.exp$|\.lib$|\.bak$|^Debug$|^Release"
+
 # jvgrep and tee
 function gre()
 {
 	tmp=${PWD/\//}
 	echo ${tmp/\//:\/} > ~/.grep_base
-	jvgrep $* | tee ~/.grep_list
+	jvgrep $jvgrep_opt $* | tee ~/.grep_list
 }
 
 # カレントディレクトリをクリップボードに
 function gd()
 {
 	tmp=${PWD/\//}
-	echo ${tmp/\//:\/} | clip.exe
+	if [ ${#tmp} -gt 1 ]
+	then
+		echo ${tmp/\//:\/} | clip.exe
+	else
+		echo ${tmp}:\\ | clip.exe
+	fi
 }
 
 # クリップボードをカレントディレクトリに
