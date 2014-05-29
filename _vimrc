@@ -27,11 +27,11 @@
 " git clone git://github.com/yuratomo/dotfiles.git
 "
 " (win 7)
-" mklink ~\.ctags ~\.vim\bundle\dotfiles\.ctags
-" mklink ~\_vimrc ~\.vim\bundle\dotfiles\_vimrc
-" mklink ~\_gvimrc ~\.vim\bundle\dotfiles\_gvimrc
-" mklink c:\vim\vimrc_local.vim .vim\bundle\dotfiles\vimrc_local.vim
-" mklink c:\vim\gvimrc_local.vim .vim\bundle\dotfiles\gvimrc_local.vim
+" cd ~
+" mklink ctags.cnf ~\.vim\bundle\dotfiles\ctags.cnf
+" mklink _vimrc ~\.vim\bundle\dotfiles\_vimrc
+" mklink _gvimrc ~\.vim\bundle\dotfiles\_gvimrc
+" mklink .bashrc ~\.vim\bundle\dotfiles\.bashrc
 "
 
 set nocompatible
@@ -44,8 +44,6 @@ try
   Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/mattn/excitetranslate-vim.git'
-  Bundle 'git://github.com/mattn/webapi-vim.git'
   Bundle 'git://github.com/mattn/httpstatus-vim.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
   Bundle 'git://github.com/Shougo/neosnippet.git'
@@ -283,7 +281,7 @@ let g:neosnippet#snippets_directory = '~/.vim/bundle/neosnippet-defines/snippets
 au BufNewFile,BufRead * setl completefunc=neosnippet#complete
 
 " find word under the cursor
-"nnoremap + <right>?<c-r><c-w><cr><c-o><left>
+nnoremap + <right>?<c-r><c-w><cr><c-o><left>
 
 " quick open xxx
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
@@ -291,7 +289,6 @@ nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
-nnoremap <F5> :<c-u>Back make<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -299,6 +296,9 @@ let s:show_quick_mode = {
   \ 'filer' : { 'bufname':'Lfiler-1',   'cmd':':Lfiler'                   },
   \ 'vimrc' : { 'bufname':'_vimrc',     'cmd':'edit ' . expand('<sfile>') },
   \ }
+
+nnoremap <F3> :GrepResult<RETURN>
+nnoremap <F5> :<c-u>Back make<RETURN>
 
 "---------------------------------------------------------------------------
 " Plugin settings
@@ -363,10 +363,6 @@ let g:javap_defines = [
   \   'javadoc' : 'http://developer.android.com/reference/%s.html' },
   \ ]
 
-" jscomplete-vim
-autocmd FileType javascript :setl omnifunc=jscomplete#CompleteJS
-let g:jscomplete_use = ['dom', 'moz']
-
 " Laltfile
 let g:Laltfile_mapping = []
 call add(g:Laltfile_mapping, {'SL.xaml$'        : '.xaml.cs'  } )
@@ -379,7 +375,8 @@ call add(g:Laltfile_mapping, {'Cntl.as$'        : '.mxml'     } )
 let g:loaded_netrwPlugin = "v140"
 
 " dbg.vim
-let g:dbg#command_mdbg= 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
+let g:dbg#command_mdbg = 
+  \ 'C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\NETFX 4.0 Tools\mdbg.exe'
 
 " java-api-complete
 let g:javaapi#delay_dirs = [
@@ -395,9 +392,6 @@ let g:cppapi#delay_dirs = [
   \ 'cpp-api-windows',
   \ 'cpp-api-ddk',
   \ ]
-
-" colorise
-"let g:colorizer_startup = 1
 
 "---------------------------------------------------------------------------
 " Convenient scripts
@@ -428,16 +422,16 @@ autocmd FileType *
 " 2つの範囲のdiffをとる
 command! -nargs=0 -range DiffClip <line1>, <line2>:call DiffClip('0')
 function! DiffClip(reg) range
- exe "let @a=@" . a:reg
- exe a:firstline  . "," . a:lastline . "y b"
- new
- set buftype=nofile bufhidden=wipe
- put a
- diffthis
- vnew
- set buftype=nofile bufhidden=wipe
- put b
- diffthis 
+  exe "let @a=@" . a:reg
+  exe a:firstline  . "," . a:lastline . "y b"
+  new
+  set buftype=nofile bufhidden=wipe
+  put a
+  diffthis
+  vnew
+  set buftype=nofile bufhidden=wipe
+  put b
+  diffthis 
 endfunction
 
 " 変更前と変更中のバッファのdiffをとる
@@ -497,7 +491,6 @@ endfunction
 " 矩形選択のI,A
 vnoremap <expr> I  <SID>force_blockwise_visual('I')
 vnoremap <expr> A  <SID>force_blockwise_visual('A')
-
 function! s:force_blockwise_visual(next_key)
   if mode() ==# 'v'
     return "\<C-v>" . a:next_key
@@ -509,17 +502,17 @@ function! s:force_blockwise_visual(next_key)
 endfunction
 
 "カーソル行をBOLD、入力モードでBOLD解除、他のウィンドウでカーソル解除
-"if has('syntax')
-"  augroup InsertHook
-"    autocmd! InsertHook
-"    autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
-"    autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
-"    autocmd InsertEnter      * hi CursorLineNr guifg=BLUE  guibg=WHITE gui=BOLD
-"    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE  gui=NONE
-"    autocmd WinLeave         * set nocursorline
-"    autocmd WinEnter,BufRead * set cursorline
-"  augroup END
-"endif
+if has('syntax')
+  augroup InsertHook
+    autocmd! InsertHook
+    autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
+    autocmd InsertLeave      * hi CursorLine guibg=NONE gui=BOLD
+    autocmd InsertEnter      * hi CursorLineNr guifg=BLUE  guibg=WHITE gui=BOLD
+    autocmd InsertLeave      * hi CursorLineNr guifg=WHITE guibg=BLUE  gui=NONE
+    autocmd WinLeave         * setl nocursorline
+    autocmd WinEnter,BufRead * setl cursorline
+  augroup END
+endif
 
 " 今開いているウィンドウを新しいタブで開きなおす
 command! OpenNewTab  :call OpenNewTab()
@@ -536,13 +529,10 @@ command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
   let g:grep_base = expand('%:p:h')
   let g:grep_str  = a:000[0]
-  let opt = '--exclude .g.i.cs$^|\.git$^|\.svn$^|.o$^|.obj$^|.exe$^|.pdb$^|.dll$^|.ncb$^|.exp$^|.lib$^|.bak$^|^Debug$^|^Release$'
+  let opt = '--exclude .g.i.cs$^|.o$^|.obj$^|.exe$^|.pdb$^|.dll$^|.ncb$^|.exp$^|.lib$^|.bak$^|^Debug$^|^Release$^|\.git$^|\.svn$'
   exe ':!start cmd /c "jvgrep ' . opt . ' ' . join(a:000, ' ') . '" | tee ' . expand('~') . '/.grep_list'
-  "silent exe ':!start gvim -c "vimgrep ' . join(a:000, ' ') . '" -c cw -c "res 30" -c "set nowrap" -- ' . expand('%:p:h')
+  redraw
 endfunction
-
-"nnoremap <F3> :<c-u>exe 'cd ' . g:grep_base<RETURN>:<c-u>cfile ~/.grep_list \| cw<RETURN>:<c-u>exe 'LSearch ' . g:grep_str<RETURN>
-nnoremap <F3> :GrepResult<RETURN>
 command! -nargs=0 GrepResult :call GrepResult()
 function! GrepResult()
   exe 'cd "' . g:grep_base . '"'
