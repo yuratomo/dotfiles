@@ -1,4 +1,4 @@
-" vim:set ts=2 sts=2 sw=2 tw=0:
+ï»¿" vim:set ts=2 sts=2 sw=2 tw=0:
 "---------------------------------------------------------------------------
 " Manual Install
 "---------------------------------------------------------------------------
@@ -29,9 +29,9 @@
 " (win 7)
 " cd ~
 " mklink ctags.cnf ~\.vim\bundle\dotfiles\ctags.cnf
+" mklink .bashrc ~\.vim\bundle\dotfiles\.bashrc
 " mklink _vimrc ~\.vim\bundle\dotfiles\_vimrc
 " mklink _gvimrc ~\.vim\bundle\dotfiles\_gvimrc
-" mklink .bashrc ~\.vim\bundle\dotfiles\.bashrc
 "
 
 set nocompatible
@@ -123,9 +123,11 @@ set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)
 "---------------------------------------------------------------------------
 " autocommand
 "---------------------------------------------------------------------------
+augroup MyAutoCmd
+au!
 au FileType vim        set sw=2 ts=2 sts=2 et
 au FileType c,cpp      set sw=4 ts=4 sts=4 noet 
-au FileType java       set sw=4 ts=4 sts=4 noet fmr={,} fdm=marker
+au FileType java       set sw=4 ts=4 sts=4 noet
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
@@ -165,13 +167,9 @@ au BufNewFile,BufRead *.html    inoremap <expr> <c-down> html5#nextRef()
 au BufNewFile,BufRead *.html    inoremap <expr> <c-up>   html5#prevRef()
 au BufNewFile,BufRead *.css     setl omnifunc=css3#complete
 au BufNewFile,BufRead build.xml setl omnifunc=ant#complete
-"au BufNewFile,BufRead *.css     setl omnifunc=csscomplete#CompleteCSS
 
-augroup xaml
-  au!
-  autocmd Filetype xml,xaml,mxml,html inoremap <buffer> </ </<C-x><C-o>
-  autocmd Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
-augroup END
+au Filetype xml,xaml,mxml,html inoremap <buffer> </ </<C-x><C-o>
+au Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
 
 try
   au CompleteDone *.php         call phpapi#showRef()
@@ -183,6 +181,25 @@ try
   au CompleteDone *.cc          call cppapi#showRef()
 catch /.*/
 endtry
+
+au BufRead,BufEnter * call MapForQuickFix()
+au BufNewFile,BufRead * setl completefunc=neosnippet#complete
+
+au BufEnter * CdCurrent
+
+" æœ€å¾Œã«ç·¨é›†ã—ãŸä½ç½®ã«ç§»å‹•ã™ã‚‹
+au BufReadPost *
+  \ if line("'\"") > 1 && line("'\"") <= line("$") |
+  \   exe "normal! g`\"" |
+  \ endif
+
+" ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ã§è£œå®Œã™ã‚‹
+au FileType *
+\   if &l:omnifunc == ''
+\ |   setlocal omnifunc=syntaxcomplete#Complete
+\ | endif
+
+augroup END
 
 "if has("balloon_eval") && has("balloon_multiline") 
 "  au BufNewFile,BufRead *.cs    setl bexpr=dotnet#balloon()
@@ -278,7 +295,6 @@ imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 let g:neosnippet#snippets_directory = '~/.vim/bundle/neosnippet-defines/snippets/'
-au BufNewFile,BufRead * setl completefunc=neosnippet#complete
 
 " find word under the cursor
 nnoremap + <right>?<c-r><c-w><cr><c-o><left>
@@ -289,6 +305,7 @@ nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
+nnoremap \mm :<c-u>marks<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -300,6 +317,28 @@ let s:show_quick_mode = {
 nnoremap <F3> :GrepResult<RETURN>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
+" æ‹¬å¼§ã‚’è‡ªå‹•è£œå®Œ (æ”¹é€ ç‰ˆ)
+inoremap {{ {}<LEFT>
+inoremap [[ []<LEFT>
+inoremap (( ()<LEFT>
+inoremap "" ""<LEFT>
+inoremap '' ''<LEFT>
+vnoremap { "zdi^V{<C-R>z}<ESC>
+vnoremap [ "zdi^V[<C-R>z]<ESC>
+vnoremap ( "zdi^V(<C-R>z)<ESC>
+vnoremap " "zdi^V"<C-R>z^V"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
+
+" æœ€å¾Œã«ç·¨é›†ã—ãŸãƒ†ã‚­ã‚¹ãƒˆã‚’é¸æŠ
+nnoremap gc  `[v`]
+
+" ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã‚’ä½¿ã„ã‚„ã™ã
+nnoremap t  <Nop>
+nnoremap tt  <C-]>
+nnoremap tj  :<C-u>tag<CR>
+nnoremap tk  :<C-u>pop<CR>
+nnoremap tl  :<C-u>tags<CR>
+
 "---------------------------------------------------------------------------
 " Plugin settings
 "---------------------------------------------------------------------------
@@ -309,7 +348,7 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 
 " gmail.vim
 let g:gmail_user_name = 'yura.tomo@gmail.com'
-let g:gmail_mailbox_trash = "[Gmail]/ƒSƒ~” "
+let g:gmail_mailbox_trash = "[Gmail]/ã‚´ãƒŸç®±"
 "let g:gmail_show_log_window = 1
 
 " ltools
@@ -349,7 +388,7 @@ if has('win32')
     \ ]
 endif
 
-" javap
+" javap.vim
 let g:javap_defines = [
   \ { 'jar'     : $JAVA_HOME . '/jre/lib/rt.jar',
   \   'javadoc' : 'http://docs.oracle.com/javase/jp/6/api/%s.html' }, 
@@ -359,7 +398,7 @@ let g:javap_defines = [
   \   'javadoc' : 'http://axis.apache.org/axis2/java/core/api/%s.html' },
   \ { 'jar'     : $AXIS2_HOME . '/lib/log4j-1.2.15.jar',
   \   'javadoc' : 'http://logging.apache.org/log4j/1.2/apidocs/%s.html' },
-  \ { 'jar'     : $ANDROID_HOME . '/libs/android.jar',
+  \ { 'jar'     : $ANDROID_HOME . 'sdk/platforms/android-19/android.jar',
   \   'javadoc' : 'http://developer.android.com/reference/%s.html' },
   \ ]
 
@@ -397,7 +436,7 @@ let g:cppapi#delay_dirs = [
 " Convenient scripts
 "---------------------------------------------------------------------------
 
-" ƒoƒbƒtƒ@•ÏX‚ÉƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ÉˆÚ“®‚·‚é
+" ãƒãƒƒãƒ•ã‚¡å¤‰æ›´æ™‚ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ç§»å‹•ã™ã‚‹
 command! -nargs=0 CdCurrent :call CdCurrent()
 function! CdCurrent()
   try
@@ -405,21 +444,8 @@ function! CdCurrent()
   catch /.*/
   endtry
 endfunc
-autocmd BufEnter * CdCurrent
 
-" ÅŒã‚É•ÒW‚µ‚½ˆÊ’u‚ÉˆÚ“®‚·‚é
-autocmd BufReadPost *
-  \ if line("'\"") > 1 && line("'\"") <= line("$") |
-  \   exe "normal! g`\"" |
-  \ endif
-
-" ƒVƒ“ƒ^ƒbƒNƒX‚Å•âŠ®‚·‚é
-autocmd FileType *
-\   if &l:omnifunc == ''
-\ |   setlocal omnifunc=syntaxcomplete#Complete
-\ | endif
-
-" 2‚Â‚Ì”ÍˆÍ‚Ìdiff‚ğ‚Æ‚é
+" 2ã¤ã®ç¯„å›²ã®diffã‚’ã¨ã‚‹
 command! -nargs=0 -range DiffClip <line1>, <line2>:call DiffClip('0')
 function! DiffClip(reg) range
   exe "let @a=@" . a:reg
@@ -434,10 +460,10 @@ function! DiffClip(reg) range
   diffthis 
 endfunction
 
-" •ÏX‘O‚Æ•ÏX’†‚Ìƒoƒbƒtƒ@‚Ìdiff‚ğ‚Æ‚é
+" å¤‰æ›´å‰ã¨å¤‰æ›´ä¸­ã®ãƒãƒƒãƒ•ã‚¡ã®diffã‚’ã¨ã‚‹
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
-" ƒ^ƒOƒtƒ@ƒCƒ‹XV
+" ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°
 command! -nargs=* -complete=dir UpdateTags  :call UpdateTags(<f-args>)
 function! UpdateTags(arg)
   let pwd  = expand('%:p:h')
@@ -453,29 +479,29 @@ function! UpdateTags(arg)
   exe 'cd '.pwd
 endfunction
 
-" ƒRƒ}ƒ“ƒhƒ‚[ƒh‚ÅŒ»İƒoƒbƒtƒ@ƒtƒ@ƒCƒ‹–¼‚ğ•âŠ®
+" ã‚³ãƒãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã§ç¾åœ¨ãƒãƒƒãƒ•ã‚¡ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è£œå®Œ
 cnoremap <C-X> <C-R>=<SID>GetBufferFileName()<CR>
 function! s:GetBufferFileName()
   let path = expand('%:p')
   return path
 endfunction
 
-" ƒrƒWƒ…ƒAƒ‹ƒ‚[ƒh‘I‘ğ‚µ‚½•”•ª‚ğ*‚ÅŒŸõ
+" ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ãƒ¢ãƒ¼ãƒ‰é¸æŠã—ãŸéƒ¨åˆ†ã‚’*ã§æ¤œç´¢
 vnoremap * "zy:let @/ = @z<CR>n
 
-" ƒNƒŠƒbƒvƒ{[ƒh‚ÉƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹–¼‚ğƒRƒs[
+" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼
 command! -nargs=0 Gp let @* = expand('%:p')
 cabbrev gp Gp
 
-" ƒNƒŠƒbƒvƒ{[ƒh‚ÉƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚ğƒRƒs[
+" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚³ãƒ”ãƒ¼
 command! -nargs=0 Gd let @* = expand('%:p:h')
 cabbrev gd Gd
 
-" ƒNƒŠƒbƒvƒ{[ƒh‚Ìƒtƒ@ƒCƒ‹‚ğŠJ‚­
+" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 command! -nargs=0 Sd exec 'edit '. @*
 cabbrev sd Sd
 
-" ƒNƒCƒbƒN•\¦
+" ã‚¯ã‚¤ãƒƒã‚¯è¡¨ç¤º
 function! QuickOpen(mode)
   if bufexists(s:show_quick_mode[a:mode].bufname)
     if bufname('%') == s:show_quick_mode[a:mode].bufname
@@ -488,7 +514,7 @@ function! QuickOpen(mode)
   endif
 endfunction
 
-" ‹éŒ`‘I‘ğ‚ÌI,A
+" çŸ©å½¢é¸æŠã®I,A
 vnoremap <expr> I  <SID>force_blockwise_visual('I')
 vnoremap <expr> A  <SID>force_blockwise_visual('A')
 function! s:force_blockwise_visual(next_key)
@@ -501,7 +527,7 @@ function! s:force_blockwise_visual(next_key)
   endif
 endfunction
 
-"ƒJ[ƒ\ƒ‹s‚ğBOLDA“ü—Íƒ‚[ƒh‚ÅBOLD‰ğœA‘¼‚ÌƒEƒBƒ“ƒhƒE‚ÅƒJ[ƒ\ƒ‹‰ğœ
+"ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’BOLDã€å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰ã§BOLDè§£é™¤ã€ä»–ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ã‚«ãƒ¼ã‚½ãƒ«è§£é™¤
 if has('syntax')
   augroup InsertHook
     autocmd! InsertHook
@@ -514,7 +540,7 @@ if has('syntax')
   augroup END
 endif
 
-" ¡ŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚ğV‚µ‚¢ƒ^ƒu‚ÅŠJ‚«‚È‚¨‚·
+" ä»Šé–‹ã„ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ–°ã—ã„ã‚¿ãƒ–ã§é–‹ããªãŠã™
 command! OpenNewTab  :call OpenNewTab()
 function! OpenNewTab()
   let l:f = expand("%:p")
@@ -524,7 +550,7 @@ function! OpenNewTab()
   endif
 endfunction
 
-" ƒoƒbƒNƒOƒ‰ƒEƒ“ƒh‚Ågrep‚³‚¹‚é
+" ãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã§grepã•ã›ã‚‹
 command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
   let g:grep_base = expand('%:p:h')
@@ -542,8 +568,7 @@ function! GrepResult()
   call Lsearch#Search(g:grep_str)
 endfunction
 
-" QuickFixƒEƒBƒ“ƒhƒE‚¾‚¯‚Ìƒ}ƒbƒv
-au BufRead,BufEnter * call MapForQuickFix()
+" QuickFixã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã ã‘ã®ãƒãƒƒãƒ—
 function! MapForQuickFix()
   if &buftype=="quickfix"
     nnoremap <buffer> <s-j>  j<CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
@@ -552,6 +577,6 @@ function! MapForQuickFix()
   endif
 endfunction
 
-" •ÊƒEƒBƒ“ƒhƒE‚ÅŠJ‚­
+" åˆ¥ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é–‹ã
 command! -nargs=0 OpenNewWindow :silent !start gvim %
 
