@@ -561,11 +561,24 @@ function! GrepNewWindow(...)
 endfunction
 command! -nargs=0 GrepResult :call GrepResult()
 function! GrepResult()
-  exe 'cd "' . g:grep_base . '"'
+  if exists('g:grep_base')
+    exe 'cd "' . g:grep_base . '"'
+    unlet g:grep_base
+  else
+    let bfile = expand("~") . "/.grep_base"
+    if !filereadable(bfile)
+      return
+    endif
+    let pwd = readfile(bfile)[0]
+    exe 'cd "' . pwd . '"'
+  endif
   cfile ~/.grep_list
   cw
   call Lsearch#Clear()
-  call Lsearch#Search(g:grep_str)
+  if exists('g:grep_str')
+    call Lsearch#Search(g:grep_str)
+    unlet g:grep_str
+  endif
 endfunction
 
 " QuickFixウィンドウだけのマップ
