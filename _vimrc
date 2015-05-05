@@ -41,8 +41,9 @@ try
   set rtp+=~/.vim/vundle.git/
   call vundle#rc()
 
-  Bundle 'git://github.com/scrooloose/syntastic.git'
+" Bundle 'git://github.com/scrooloose/syntastic.git'
   Bundle 'git://github.com/majutsushi/tagbar.git'
+  Bundle 'git://github.com/cohama/agit.vim.git'
   Bundle 'git://github.com/mattn/calendar-vim.git'
   Bundle 'git://github.com/mattn/httpstatus-vim.git'
   Bundle 'git://github.com/Shougo/vinarise.git'
@@ -85,8 +86,12 @@ try
 catch /.*/
 endtry
 
-if has('win32') && executable('jvgrep')
-  set grepprg=jvgrep\ --exclude\ \\.g\\.i\\.cs$\|\\.git$\|\\.svn$\|\\.o$\|\\.obj$\|\\.exe$\|\\.pdb$\|\\.dll$\|\\.ncb$\|\\.exp$\|\\.lib$\|\\.bak$\|^Debug$\|^Release$
+"if has('win32') && executable('jvgrep')
+"  set grepprg=jvgrep\ --exclude\ \\.g\\.i\\.cs$\|\\.git$\|\\.svn$\|\\.o$\|\\.obj$\|\\.exe$\|\\.pdb$\|\\.dll$\|\\.ncb$\|\\.exp$\|\\.lib$\|\\.bak$\|^Debug$\|^Release$
+"endif
+
+if has('win32') && executable('pt')
+  set grepprg=pt\ --nogroup\ --nocolor\ -o\ sjis
 endif
 
 "---------------------------------------------------------------------------
@@ -117,7 +122,9 @@ set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
 set textwidth=0
-set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ %6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c
+set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ 
+let &statusline .= '%{b:git_branch}'
+let &statusline .= "%6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c"
 
 
 "---------------------------------------------------------------------------
@@ -304,8 +311,9 @@ nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
-nnoremap \gg :<c-u>Back grep  *<LEFT><LEFT>
+nnoremap \gg :<c-u>Lgrep 
 nnoremap \mm :<c-u>marks<RETURN>
+nnoremap \oo :<c-u>Loutline<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -570,7 +578,7 @@ function! GrepResult()
       return
     endif
     let pwd = readfile(bfile)[0]
-    exe 'cd "' . pwd . '"'
+    exe 'cd "' . pwd . '/"'
   endif
   cfile ~/.grep_list
   cw
@@ -592,4 +600,18 @@ endfunction
 
 " 別ウィンドウで開く
 command! -nargs=0 OpenNewWindow :silent !start gvim %
+
+" gitのブランチ名表示
+autocmd! BufEnter * let b:git_branch = GetGitBranchName()
+function! GetGitBranchName()
+	let dir = expand('%:p:h')
+	let branch = ""
+  if isdirectory(dir)
+    let r = system('cd ' . dir . ' && git symbolic-ref HEAD 2> /dev/null')
+    if r != "" && v:shell_error == 0
+      let branch = split(r,"/")[-1][:-2]
+    endif
+	endif
+	return branch
+endfunction
 
