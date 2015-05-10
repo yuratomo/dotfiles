@@ -32,6 +32,7 @@ set mousehide
 set cmdheight=1
 
 colorscheme neon2
+set background=dark
 
 " クリックした単語をハイライト表示させる
 nnoremap <expr> <LeftRelease> <SID>click_hilight()

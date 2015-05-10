@@ -1,97 +1,51 @@
-ï»¿" vim:set ts=2 sts=2 sw=2 tw=0:
-"---------------------------------------------------------------------------
-" Manual Install
-"---------------------------------------------------------------------------
-"
-" - git
-"  http://code.google.com/p/msysgit/downloads/list
-"
-" - ctags
-"  http://hp.vector.co.jp/authors/VA025040/
-"
-" - jvgrep
-"  https://github.com/mattn/jvgrep/downloads
-"
-" - w3m
-"  http://hp.vector.co.jp/authors/VA052357/w3m_w32.html
-"
-" - diff
-"  http://gnuwin32.sourceforge.net/packages/diffutils.htm
-"
-"---------------------------------------------------------------------------
-" Vundle
-"---------------------------------------------------------------------------
-" mkdir -p ~/.vim/bundle
-" git clone git://github.com/gmarik/vundle.git ~/.vim/bundle/vundle.git
-" cd ~/.vim/bundle
-" git clone git://github.com/yuratomo/dotfiles.git
-"
-" (win 7)
-" cd ~
-" mklink ctags.cnf ~\.vim\bundle\dotfiles\ctags.cnf
-" mklink .bashrc ~\.vim\bundle\dotfiles\.bashrc
-" mklink _vimrc ~\.vim\bundle\dotfiles\_vimrc
-" mklink _gvimrc ~\.vim\bundle\dotfiles\_gvimrc
-"
+" vim:set ts=2 sts=2 sw=2 tw=0:
+let &runtimepath = &runtimepath.',~/.vim'
 
-set nocompatible
+call plug#begin('~/.vim/plugged')
+Plug 'LeafCage/yankround.vim'
+Plug 'majutsushi/tagbar'
+Plug 'cohama/agit.vim'
+Plug 'vimwiki/vimwiki'
+Plug 'OmniSharp/omnisharp-vim'
+Plug 'mattn/calendar-vim'
+Plug 'mattn/httpstatus-vim'
+Plug 'Shougo/vinarise'
+Plug 'Shougo/neosnippet'
+Plug 'yuratomo/dotfiles'
+Plug 'yuratomo/w3m.vim'
+Plug 'yuratomo/weather.vim'
+Plug 'yuratomo/vs.vim'
+Plug 'yuratomo/dbg.vim'
+Plug 'yuratomo/bg.vim'
+Plug 'yuratomo/neon.vim'
+Plug 'yuratomo/gmail.vim'
+Plug 'yuratomo/gnews.vim'
+Plug 'yuratomo/ltools.vim'
+Plug 'yuratomo/winfiler'
+Plug 'yuratomo/ildasm.vim'
+Plug 'yuratomo/javap.vim'
+Plug 'yuratomo/neosnippet-defines'
+Plug 'yuratomo/dotnet-complete'
+Plug 'yuratomo/cpp-api-complete'
+Plug 'yuratomo/cpp-api-windows'
+Plug 'yuratomo/cpp-api-ddk'
+Plug 'yuratomo/java-api-complete'
+Plug 'yuratomo/java-api-javax'
+Plug 'yuratomo/java-api-org'
+Plug 'yuratomo/java-api-sun'
+Plug 'yuratomo/java-api-servlet2.3'
+Plug 'yuratomo/java-api-android'
+Plug 'yuratomo/java-api-junit'
+Plug 'yuratomo/flex-api-complete'
+Plug 'yuratomo/phpapi-complete'
+Plug 'yuratomo/perl-api-complete'
+Plug 'yuratomo/html5-complete'
+Plug 'yuratomo/css3-complete'
+Plug 'yuratomo/ant-complete'
+call plug#end()
 
-try
-  "filetype off
-  set rtp+=~/.vim/vundle.git/
-  call vundle#rc()
-
-" Bundle 'git://github.com/scrooloose/syntastic.git'
-  Bundle 'git://github.com/majutsushi/tagbar.git'
-  Bundle 'git://github.com/cohama/agit.vim.git'
-  Bundle 'git://github.com/mattn/calendar-vim.git'
-  Bundle 'git://github.com/mattn/httpstatus-vim.git'
-  Bundle 'git://github.com/Shougo/vinarise.git'
-  Bundle 'git://github.com/Shougo/neosnippet.git'
-  Bundle 'git://github.com/Shougo/vimproc.vim.git'
-  Bundle 'git://github.com/vim-scripts/vimwiki.git'
-  Bundle 'git://github.com/yuratomo/dotfiles.git'
-  Bundle 'git://github.com/yuratomo/w3m.vim.git'
-  Bundle 'git://github.com/yuratomo/weather.vim.git'
-  Bundle 'git://github.com/yuratomo/vs.vim.git'
-  Bundle 'git://github.com/yuratomo/dbg.vim.git'
-  Bundle 'git://github.com/yuratomo/bg.vim.git'
-  Bundle 'git://github.com/yuratomo/neon.vim.git'
-  Bundle 'git://github.com/yuratomo/gmail.vim.git'
-  Bundle 'git://github.com/yuratomo/gnews.vim.git'
-  Bundle 'git://github.com/yuratomo/ltools.vim.git'
-  Bundle 'git://github.com/yuratomo/winfiler.git'
-  Bundle 'git://github.com/yuratomo/ildasm.vim.git'
-  Bundle 'git://github.com/yuratomo/javap.vim.git'
-  Bundle 'git://github.com/yuratomo/neosnippet-defines.git'
-  Bundle 'git://github.com/yuratomo/dotnet-complete.git'
-  Bundle 'git://github.com/yuratomo/cpp-api-complete.git'
-  Bundle 'git://github.com/yuratomo/cpp-api-windows.git'
-  Bundle 'git://github.com/yuratomo/cpp-api-ddk.git'
-  Bundle 'git://github.com/yuratomo/java-api-complete.git'
-  Bundle 'git://github.com/yuratomo/java-api-javax.git'
-  Bundle 'git://github.com/yuratomo/java-api-org.git'
-  Bundle 'git://github.com/yuratomo/java-api-sun.git'
-  Bundle 'git://github.com/yuratomo/java-api-servlet2.3.git'
-  Bundle 'git://github.com/yuratomo/java-api-android.git'
-  Bundle 'git://github.com/yuratomo/java-api-junit.git'
-  Bundle 'git://github.com/yuratomo/flex-api-complete.git'
-  Bundle 'git://github.com/yuratomo/phpapi-complete.git'
-  Bundle 'git://github.com/yuratomo/perl-api-complete.git'
-  Bundle 'git://github.com/yuratomo/html5-complete.git'
-  Bundle 'git://github.com/yuratomo/css3-complete.git'
-  Bundle 'git://github.com/yuratomo/ant-complete.git'
-
-  filetype plugin indent on
-catch /.*/
-endtry
-
-"if has('win32') && executable('jvgrep')
-"  set grepprg=jvgrep\ --exclude\ \\.g\\.i\\.cs$\|\\.git$\|\\.svn$\|\\.o$\|\\.obj$\|\\.exe$\|\\.pdb$\|\\.dll$\|\\.ncb$\|\\.exp$\|\\.lib$\|\\.bak$\|^Debug$\|^Release$
-"endif
-
-if has('win32') && executable('pt')
-  set grepprg=pt\ --nogroup\ --nocolor\ -o\ sjis
+if has('win32') && executable('jvgrep')
+  set grepprg=jvgrep
 endif
 
 "---------------------------------------------------------------------------
@@ -118,12 +72,13 @@ set noswapfile
 set complete=.,w,b,u
 set tags+=tags;
 set concealcursor=n
+set nocursorline
 set completeopt=menuone
 set helplang=ja,en
 set shortmess& shortmess+=I
 set textwidth=0
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ 
-let &statusline .= '%{b:git_branch}'
+let &statusline .= '%{exists("b:git_branch") ?  "[" . b:git_branch . "]" : ""}'
 let &statusline .= "%6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c"
 
 
@@ -156,9 +111,10 @@ au BufNewFile,BufRead *.mxml    setf xml
 au BufNewFile,BufRead *.xaml    setf xaml
 
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
-au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
-au BufNewFile,BufRead *.cs      inoremap <expr> <c-down> dotnet#nextRef()
-au BufNewFile,BufRead *.cs      inoremap <expr> <c-up>   dotnet#prevRef()
+"au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
+au BufNewFile,BufRead *.cs      setl omnifunc=OmniSharp#Complete
+"au BufNewFile,BufRead *.cs      inoremap <expr> <c-down> dotnet#nextRef()
+"au BufNewFile,BufRead *.cs      inoremap <expr> <c-up>   dotnet#prevRef()
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
 au BufNewFile,BufRead *.java    inoremap <expr> <c-down> javaapi#nextRef()
 au BufNewFile,BufRead *.java    inoremap <expr> <c-up>   javaapi#prevRef()
@@ -181,7 +137,7 @@ au Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
 try
   au CompleteDone *.php         call phpapi#showRef()
   au CompleteDone *.pl          call perlapi#showRef()
-  au CompleteDone *.cs          call dotnet#showRef()
+"  au CompleteDone *.cs          call dotnet#showRef()
   au CompleteDone *.java        call javaapi#showRef()
   au CompleteDone *.as          call flexapi#showRef()
   au CompleteDone *.cpp         call cppapi#showRef()
@@ -194,13 +150,13 @@ au BufNewFile,BufRead * setl completefunc=neosnippet#complete
 
 au BufEnter * CdCurrent
 
-" æœ€å¾Œã«ç·¨é›†ã—ãŸä½ç½®ã«ç§»å‹•ã™ã‚‹
+" ÅŒã‚É•ÒW‚µ‚½ˆÊ’u‚ÉˆÚ“®‚·‚é
 au BufReadPost *
   \ if line("'\"") > 1 && line("'\"") <= line("$") |
   \   exe "normal! g`\"" |
   \ endif
 
-" ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ã§è£œå®Œã™ã‚‹
+" ƒVƒ“ƒ^ƒbƒNƒX‚Å•âŠ®‚·‚é
 au FileType *
 \   if &l:omnifunc == ''
 \ |   setlocal omnifunc=syntaxcomplete#Complete
@@ -239,7 +195,8 @@ cnoremap <c-a> <HOME>
 cnoremap <c-e> <END>
 cnoremap <c-d> <DELETE>
 cnoremap <C-K> <C-\>estrpart(getcmdline(), 0, getcmdpos()-1)<CR>
-cnoremap <c-w> <c-f>
+cnoremap <c-v> <c-r>*
+cnoremap <c-q> <c-f>
 
 " turn off IME when leave insert mode
 inoremap <ESC> <ESC>
@@ -301,7 +258,7 @@ endif
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
-let g:neosnippet#snippets_directory = '~/.vim/bundle/neosnippet-defines/snippets/'
+let g:neosnippet#snippets_directory = '~/.vim/plugged/neosnippet-defines/snippets/'
 
 " find word under the cursor
 nnoremap + <right>?<c-r><c-w><cr><c-o><left>
@@ -311,9 +268,11 @@ nnoremap \ss :<c-u>QuickOpen shell<RETURN>
 nnoremap \ff :<c-u>QuickOpen filer<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
-nnoremap \gg :<c-u>Lgrep 
+nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT><c-r><c-w>
 nnoremap \mm :<c-u>marks<RETURN>
 nnoremap \oo :<c-u>Loutline<RETURN>
+nnoremap \bb :<c-u>Lbookmark<RETURN>
+nnoremap \ba :<c-u>LRegistBookmark<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -325,22 +284,22 @@ let s:show_quick_mode = {
 nnoremap <F3> :GrepResult<RETURN>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
-" æ‹¬å¼§ã‚’è‡ªå‹•è£œå®Œ (æ”¹é€ ç‰ˆ)
-inoremap {{ {}<LEFT>
-inoremap [[ []<LEFT>
-inoremap (( ()<LEFT>
-inoremap "" ""<LEFT>
-inoremap '' ''<LEFT>
-vnoremap { "zdi^V{<C-R>z}<ESC>
-vnoremap [ "zdi^V[<C-R>z]<ESC>
-vnoremap ( "zdi^V(<C-R>z)<ESC>
-vnoremap " "zdi^V"<C-R>z^V"<ESC>
+" Š‡ŒÊ‚ğ©“®•âŠ® (‰ü‘¢”Å)
+"inoremap {{ {}<LEFT>
+"inoremap [[ []<LEFT>
+"inoremap (( ()<LEFT>
+"inoremap "" ""<LEFT>
+"inoremap '' ''<LEFT>
+vnoremap { "zdi{<C-R>z}<ESC>
+vnoremap [ "zdi[<C-R>z]<ESC>
+vnoremap ( "zdi(<C-R>z)<ESC>
+vnoremap " "zdi"<C-R>z"<ESC>
 vnoremap ' "zdi'<C-R>z'<ESC>
 
-" æœ€å¾Œã«ç·¨é›†ã—ãŸãƒ†ã‚­ã‚¹ãƒˆã‚’é¸æŠ
+" ÅŒã‚É•ÒW‚µ‚½ƒeƒLƒXƒg‚ğ‘I‘ğ
 nnoremap gc  `[v`]
 
-" ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ã‚’ä½¿ã„ã‚„ã™ã
+" ƒ^ƒOƒWƒƒƒ“ƒv‚ğg‚¢‚â‚·‚­
 nnoremap t  <Nop>
 nnoremap tt  <C-]>
 nnoremap tj  :<C-u>tag<CR>
@@ -356,7 +315,7 @@ let g:w3m#homepage = 'http://www.google.co.jp/'
 
 " gmail.vim
 let g:gmail_user_name = 'yura.tomo@gmail.com'
-let g:gmail_mailbox_trash = "[Gmail]/ã‚´ãƒŸç®±"
+let g:gmail_mailbox_trash = "[Gmail]/ƒSƒ~” "
 "let g:gmail_show_log_window = 1
 
 " ltools
@@ -440,11 +399,20 @@ let g:cppapi#delay_dirs = [
   \ 'cpp-api-ddk',
   \ ]
 
+" yankround.vim
+"" ƒL[ƒ}ƒbƒv
+nmap p <Plug>(yankround-p)
+nmap P <Plug>(yankround-P)
+nmap <C-p> <Plug>(yankround-prev)
+nmap <C-n> <Plug>(yankround-next)
+"" —š—ğæ“¾”
+let g:yankround_max_history = 50
+
 "---------------------------------------------------------------------------
 " Convenient scripts
 "---------------------------------------------------------------------------
 
-" ãƒãƒƒãƒ•ã‚¡å¤‰æ›´æ™‚ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ç§»å‹•ã™ã‚‹
+" ƒoƒbƒtƒ@•ÏX‚ÉƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ÉˆÚ“®‚·‚é
 command! -nargs=0 CdCurrent :call CdCurrent()
 function! CdCurrent()
   try
@@ -453,7 +421,7 @@ function! CdCurrent()
   endtry
 endfunc
 
-" 2ã¤ã®ç¯„å›²ã®diffã‚’ã¨ã‚‹
+" 2‚Â‚Ì”ÍˆÍ‚Ìdiff‚ğ‚Æ‚é
 command! -nargs=0 -range DiffClip <line1>, <line2>:call DiffClip('0')
 function! DiffClip(reg) range
   exe "let @a=@" . a:reg
@@ -468,48 +436,103 @@ function! DiffClip(reg) range
   diffthis 
 endfunction
 
-" å¤‰æ›´å‰ã¨å¤‰æ›´ä¸­ã®ãƒãƒƒãƒ•ã‚¡ã®diffã‚’ã¨ã‚‹
+" •ÏX‘O‚Æ•ÏX’†‚Ìƒoƒbƒtƒ@‚Ìdiff‚ğ‚Æ‚é
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
-" ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«æ›´æ–°
+" ƒ^ƒOƒtƒ@ƒCƒ‹XV
 command! -nargs=* -complete=dir UpdateTags  :call UpdateTags(<f-args>)
-function! UpdateTags(arg)
+function! UpdateTags(...)
   let pwd  = expand('%:p:h')
-  exe 'cd '.a:arg
+  if a:0 == 0
+    let path = GetRoot()
+  else
+    let path = a:1
+  endif
+  exe 'cd ' . path
   let ext = expand('%:p:e')
   if ext ==? 'php'
-    silent exe ':!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . a:arg
+    silent exe ':!start /MIN ctags -ex -f %:p:h/tags --langmap="php:+.inc" -h ".php.inc" -R --totals=yes --tag-relative=yes --PHP-kinds=+cf-v %:p:h<CR>' . path
   elseif ext ==? 'as'
-    silent exe ":!start /MIN ctags -R --languages=actionscript " . a:arg
+    silent exe ":!start /MIN ctags -R --languages=actionscript " . path
   else
-    silent exe ":!start /MIN ctags -R --cs-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q " . a:arg
+    silent exe ":!start /MIN ctags -R --cs-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q " . path
   endif
-  exe 'cd '.pwd
+  exe 'cd ' . pwd
 endfunction
 
-" ã‚³ãƒãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã§ç¾åœ¨ãƒãƒƒãƒ•ã‚¡ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è£œå®Œ
+" <c-r>r‚Åƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠ•âŠ®
+cnoremap <c-r>r <C-R>=GetRoot()<CR>
+
+" sln/makefile/build.xml‚È‚Ç‚ª‚ ‚éƒ‹[ƒgƒfƒBƒŒƒNƒgƒŠæ“¾
+let s:base_files = [
+\ 'Makefile',
+\ 'makefile',
+\ 'build.xml',
+\ '*.sln',
+\ '*.mak',
+\ ]
+command! -nargs=* GrepRoot  :call GrepRoot(<f-args>)
+function! GrepRoot(...)
+  let root = GetRoot()
+  if root == ''
+    let path = '**/' . a:2
+  else
+    let path = root . '/**/' . a:2
+  endif
+  call Lgrep#do(a:1, path)
+endfunction
+function! GetRoot()
+  let param = ''
+  let find = 0
+  let cnt = 10
+  while cnt > 0
+    let pwd  = expand('%:p:h' . param)
+    if strlen(pwd) == 3
+      break
+    endif
+
+    for f in s:base_files
+      let file = expand(pwd . '/' . f)
+      if filereadable(file)
+        let find = 1
+        break
+      endif
+    endfor
+	if find == 1
+	  break
+	endif
+    let param .= ':h'
+    let cnt -= 1
+  endwhile
+  if find == 1
+    return substitute(param, ':h', '..\', 'g')
+  endif
+  return ''
+endfunction
+
+" ƒRƒ}ƒ“ƒhƒ‚[ƒh‚ÅŒ»İƒoƒbƒtƒ@ƒtƒ@ƒCƒ‹–¼‚ğ•âŠ®
 cnoremap <C-X> <C-R>=<SID>GetBufferFileName()<CR>
 function! s:GetBufferFileName()
   let path = expand('%:p')
   return path
 endfunction
 
-" ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ãƒ¢ãƒ¼ãƒ‰é¸æŠã—ãŸéƒ¨åˆ†ã‚’*ã§æ¤œç´¢
+" ƒrƒWƒ…ƒAƒ‹ƒ‚[ƒh‘I‘ğ‚µ‚½•”•ª‚ğ*‚ÅŒŸõ
 vnoremap * "zy:let @/ = @z<CR>n
 
-" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼
+" ƒNƒŠƒbƒvƒ{[ƒh‚ÉƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹–¼‚ğƒRƒs[
 command! -nargs=0 Gp let @* = expand('%:p')
 cabbrev gp Gp
 
-" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã‚’ã‚³ãƒ”ãƒ¼
+" ƒNƒŠƒbƒvƒ{[ƒh‚ÉƒJƒŒƒ“ƒgƒtƒHƒ‹ƒ_‚ğƒRƒs[
 command! -nargs=0 Gd let @* = expand('%:p:h')
 cabbrev gd Gd
 
-" ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
+" ƒNƒŠƒbƒvƒ{[ƒh‚Ìƒtƒ@ƒCƒ‹‚ğŠJ‚­
 command! -nargs=0 Sd exec 'edit '. @*
 cabbrev sd Sd
 
-" ã‚¯ã‚¤ãƒƒã‚¯è¡¨ç¤º
+" ƒNƒCƒbƒN•\¦
 function! QuickOpen(mode)
   if bufexists(s:show_quick_mode[a:mode].bufname)
     if bufname('%') == s:show_quick_mode[a:mode].bufname
@@ -522,7 +545,7 @@ function! QuickOpen(mode)
   endif
 endfunction
 
-" çŸ©å½¢é¸æŠã®I,A
+" ‹éŒ`‘I‘ğ‚ÌI,A
 vnoremap <expr> I  <SID>force_blockwise_visual('I')
 vnoremap <expr> A  <SID>force_blockwise_visual('A')
 function! s:force_blockwise_visual(next_key)
@@ -535,7 +558,7 @@ function! s:force_blockwise_visual(next_key)
   endif
 endfunction
 
-"ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’BOLDã€å…¥åŠ›ãƒ¢ãƒ¼ãƒ‰ã§BOLDè§£é™¤ã€ä»–ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ã‚«ãƒ¼ã‚½ãƒ«è§£é™¤
+"ƒJ[ƒ\ƒ‹s‚ğBOLDA“ü—Íƒ‚[ƒh‚ÅBOLD‰ğœA‘¼‚ÌƒEƒBƒ“ƒhƒE‚ÅƒJ[ƒ\ƒ‹‰ğœ
 if has('syntax')
   augroup InsertHook
     autocmd! InsertHook
@@ -548,7 +571,7 @@ if has('syntax')
   augroup END
 endif
 
-" ä»Šé–‹ã„ã¦ã„ã‚‹ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’æ–°ã—ã„ã‚¿ãƒ–ã§é–‹ããªãŠã™
+" ¡ŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒE‚ğV‚µ‚¢ƒ^ƒu‚ÅŠJ‚«‚È‚¨‚·
 command! OpenNewTab  :call OpenNewTab()
 function! OpenNewTab()
   let l:f = expand("%:p")
@@ -558,7 +581,7 @@ function! OpenNewTab()
   endif
 endfunction
 
-" ãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã§grepã•ã›ã‚‹
+" ƒoƒbƒNƒOƒ‰ƒEƒ“ƒh‚Ågrep‚³‚¹‚é
 command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
   let g:grep_base = expand('%:p:h')
@@ -589,7 +612,7 @@ function! GrepResult()
   endif
 endfunction
 
-" QuickFixã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã ã‘ã®ãƒãƒƒãƒ—
+" QuickFixƒEƒBƒ“ƒhƒE‚¾‚¯‚Ìƒ}ƒbƒv
 function! MapForQuickFix()
   if &buftype=="quickfix"
     nnoremap <buffer> <s-j>  j<CR>:<c-U>LflagClear<CR>:<c-U>Lflag<CR>:<c-u>wincmd p<CR>
@@ -598,20 +621,83 @@ function! MapForQuickFix()
   endif
 endfunction
 
-" åˆ¥ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§é–‹ã
+" •ÊƒEƒBƒ“ƒhƒE‚ÅŠJ‚­
 command! -nargs=0 OpenNewWindow :silent !start gvim %
 
-" gitã®ãƒ–ãƒ©ãƒ³ãƒåè¡¨ç¤º
+" git‚Ìƒuƒ‰ƒ“ƒ`–¼•\¦
 autocmd! BufEnter * let b:git_branch = GetGitBranchName()
 function! GetGitBranchName()
-	let dir = expand('%:p:h')
-	let branch = ""
+  let dir = expand('%:p:h')
+  let branch = ""
   if isdirectory(dir)
     let r = system('cd ' . dir . ' && git symbolic-ref HEAD 2> /dev/null')
     if r != "" && v:shell_error == 0
       let branch = split(r,"/")[-1][:-2]
     endif
-	endif
-	return branch
+  endif
+  return branch
 endfunction
+finish
 
+#---------------------------------------------------------------------------
+# Manual Install
+#---------------------------------------------------------------------------
+#
+# - git
+#  http://code.google.com/p/msysgit/downloads/list
+#
+
+#---------------------------------------------------------------------------
+# Tool Install
+#---------------------------------------------------------------------------
+# - vim
+curl -fLo vim.zip http://files.kaoriya.net/goto/vim74w32
+unzip vim.zip
+mv vim74-kaoriya-win32 /c/vim
+rm vim.zip
+cd /c/vim
+
+# - plug.vim
+mkdir -p ~/.vim/autoload
+curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"
+# - w3m
+curl -fLo w3m.zip http://hp.vector.co.jp/authors/VA052357/w3m-0.5.3-mingw32.zip
+unzip w3m.zip -x w3mbookmark.exe w3mhelperpanel.exe readme.txt
+rm w3m.zip
+
+# - diff
+curl -fLo diff.zip http://gnuwin32.sourceforge.net/downlinks/diffutils-bin-zip.php
+curl -fLo diff-dep.zip http://gnuwin32.sourceforge.net/downlinks/diffutils-dep-zip.php
+unzip diff.zip bin/diff.exe
+mv bin/diff.exe .
+unzip diff-dep.zip bin/libiconv2.dll bin/libintl3.dll
+mv bin/* .
+rmdir bin
+rm diff.zip
+rm diff-dep.zip
+
+# - ctags
+curl -fLo ctags.zip http://hp.vector.co.jp/authors/VA025040/ctags/downloads/ec58j2w32bin.zip
+unzip ctags.zip ctags58j2bin/ctags.exe
+mv ctags58j2bin/ctags.exe .
+rmdir ctags58j2bin
+rm ctags.zip
+
+# - jvgrep
+curl -fLo jvgrep.tar.gz https://github.com/downloads/mattn/jvgrep/jvgrep-win32-2.7.tar.gz
+tar xzvf jvgrep.tar.gz
+mv jvgrep-win32-2.7/* .
+rmdir jvgrep-win32-2.7
+rm jvgrep.tar.gz
+
+# - ag
+curl -fLo ag.exe https://kjkpub.s3.amazonaws.com/software/the_silver_searcher/rel/0.18.1-1129/ag.exe
+
+# - dotfiles
+mkdir -p ~/.vim/plugged
+cd ~/.vim/plugged
+git clone git://github.com/yuratomo/dotfiles.git
+cd /c/vim
+ln ~/.vim/plugged/dotfiles/_vimrc ~/_vimrc
+ln ~/.vim/plugged/dotfiles/_gvimrc ~/_gvimrc
