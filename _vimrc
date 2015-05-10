@@ -80,6 +80,7 @@ set textwidth=0
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ 
 let &statusline .= '%{exists("b:git_branch") ?  "[" . b:git_branch . "]" : ""}'
 let &statusline .= "%6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c"
+set undodir=~/.vim/undo/
 
 
 "---------------------------------------------------------------------------
@@ -265,10 +266,10 @@ nnoremap + <right>?<c-r><c-w><cr><c-o><left>
 
 " quick open xxx
 nnoremap \ss :<c-u>QuickOpen shell<RETURN>
-nnoremap \ff :<c-u>QuickOpen filer<RETURN>
+nnoremap \ff :<c-u>WinFilerFind<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
-nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT><c-r><c-w>
+nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT>
 nnoremap \mm :<c-u>marks<RETURN>
 nnoremap \oo :<c-u>Loutline<RETURN>
 nnoremap \bb :<c-u>Lbookmark<RETURN>
@@ -398,6 +399,20 @@ let g:cppapi#delay_dirs = [
   \ 'cpp-api-windows',
   \ 'cpp-api-ddk',
   \ ]
+
+" jvgrep
+let s:ignore_ext = [
+  \ 'git', 'svn',
+  \ 'o', 'obj', 'a', 'lib', 'so', 'dll', 'exe', 'bin', 
+  \ 'suo', 'pdb', 'balm', 'tlog', 'cache', 'lref', 'resources', 'exe.config', 'trx', 'dat', 
+  \ 'aps', 'pch', 'idb', 'dep', 'ilk', 'ncb', 'clw',
+  \ 'g.cs', 'g.i.cs', 'designer.cs', 'class',
+  \ 'swp', 'swo', 'bak']
+let $JVGREP_EXCLUDE =
+  \ join(map(
+  \   copy(s:ignore_ext),
+  \   '''\.'' . escape(v:val, ''\*+.?{}()[]^$-|/'') . ''$'''), '|')
+  \   . '|tags'
 
 " yankround.vim
 "" キーマップ
@@ -586,8 +601,7 @@ command! -nargs=* Grep :call GrepNewWindow(<f-args>)
 function! GrepNewWindow(...)
   let g:grep_base = expand('%:p:h')
   let g:grep_str  = a:000[0]
-  let opt = '--exclude .g.i.cs$^|.o$^|.obj$^|.exe$^|.pdb$^|.dll$^|.ncb$^|.exp$^|.lib$^|.bak$^|^Debug$^|^Release$^|\.git$^|\.svn$'
-  exe ':!start cmd /c "jvgrep ' . opt . ' ' . join(a:000, ' ') . '" | tee ' . expand('~') . '/.grep_list'
+  exe ':!start cmd /c "jvgrep ' . join(a:000, ' ') . '" | tee ' . expand('~') . '/.grep_list'
   redraw
 endfunction
 command! -nargs=0 GrepResult :call GrepResult()
@@ -642,7 +656,6 @@ finish
 #---------------------------------------------------------------------------
 # Manual Install
 #---------------------------------------------------------------------------
-#
 # - git
 #  http://code.google.com/p/msysgit/downloads/list
 #
