@@ -664,10 +664,14 @@ function! GitBranch()
   let dir = expand('%:p:h')
   let branch = ""
   if isdirectory(dir)
-    let r = system('cd ' . dir . ' && git symbolic-ref HEAD 2> /dev/null')
-    if r != "" && v:shell_error == 0
-      let branch = split(r,"/")[-1][:-2]
-    endif
+    try
+      let r = system('cd ' . dir . ' && git symbolic-ref HEAD 2> /dev/null')
+      if r != "" && v:shell_error == 0
+        let branch = split(r,"/")[-1][:-2]
+        echo join(systemlist('git branch'), ' ')
+      endif
+    catch /.*/
+    endtry
   endif
   let b:git_branch = branch
 endfunction
