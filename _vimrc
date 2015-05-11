@@ -81,6 +81,7 @@ set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\
 let &statusline .= '%{exists("b:git_branch") ?  "[" . b:git_branch . "]" : ""}'
 let &statusline .= "%6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c"
 set undodir=~/.vim/undo/
+set pumheight=20
 
 
 "---------------------------------------------------------------------------
@@ -265,15 +266,18 @@ let g:neosnippet#snippets_directory = '~/.vim/plugged/neosnippet-defines/snippet
 nnoremap + <right>?<c-r><c-w><cr><c-o><left>
 
 " quick open xxx
-nnoremap \ss :<c-u>QuickOpen shell<RETURN>
+nnoremap \ss :<c-u>EchoShell<RETURN>
+nnoremap \sg :<c-u>EchoShell git\ <RETURN>
 nnoremap \ff :<c-u>WinFilerFind<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT>
+nnoremap \gc :<c-u>LgrepCancel<RETURN>
 nnoremap \mm :<c-u>marks<RETURN>
 nnoremap \oo :<c-u>Loutline<RETURN>
 nnoremap \bb :<c-u>Lbookmark<RETURN>
 nnoremap \ba :<c-u>LRegistBookmark<RETURN>
+nnoremap \qq :<c-u>Lquick<RETURN>
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -415,12 +419,10 @@ let $JVGREP_EXCLUDE =
   \   . '|tags'
 
 " yankround.vim
-"" キーマップ
 nmap p <Plug>(yankround-p)
 nmap P <Plug>(yankround-P)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
-"" 履歴取得数
 let g:yankround_max_history = 50
 
 "---------------------------------------------------------------------------
@@ -524,6 +526,24 @@ function! GetRoot()
   endif
   return ''
 endfunction
+
+" 簡易シェル
+command! -nargs=* EchoShell  :call EchoShell(<f-args>)
+function! EchoShell(...)
+  let text = ''
+  if a:0 > 0
+    let text = a:1
+  endif
+  let cmd = input('>', text)
+  if cmd != ''
+    let res = system(cmd)
+    redraw
+    echo res
+  endif
+endfunction
+
+" 現在時刻表示
+command! -nargs=0 Now  : echo strftime("%Y/%b/%d %X")
 
 " コマンドモードで現在バッファファイル名を補完
 cnoremap <C-X> <C-R>=<SID>GetBufferFileName()<CR>
@@ -639,8 +659,8 @@ endfunction
 command! -nargs=0 OpenNewWindow :silent !start gvim %
 
 " gitのブランチ名表示
-autocmd! BufEnter * let b:git_branch = GetGitBranchName()
-function! GetGitBranchName()
+command! -nargs=0 GitBranch :call GitBranch()
+function! GitBranch()
   let dir = expand('%:p:h')
   let branch = ""
   if isdirectory(dir)
@@ -649,7 +669,7 @@ function! GetGitBranchName()
       let branch = split(r,"/")[-1][:-2]
     endif
   endif
-  return branch
+  let b:git_branch = branch
 endfunction
 finish
 
