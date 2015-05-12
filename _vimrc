@@ -267,17 +267,19 @@ nnoremap + <right>?<c-r><c-w><cr><c-o><left>
 
 " quick open xxx
 nnoremap \ss :<c-u>EchoShell<RETURN>
-nnoremap \sg :<c-u>EchoShell git\ <RETURN>
 nnoremap \ff :<c-u>WinFilerFind<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
 nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT>
 nnoremap \gc :<c-u>LgrepCancel<RETURN>
-nnoremap \mm :<c-u>marks<RETURN>
+nnoremap \mm :<c-u>Lmru<RETURN>
 nnoremap \oo :<c-u>Loutline<RETURN>
 nnoremap \bb :<c-u>Lbookmark<RETURN>
 nnoremap \ba :<c-u>LRegistBookmark<RETURN>
 nnoremap \qq :<c-u>Lquick<RETURN>
+nnoremap \gb :<c-u>GitBranch<RETURN>
+nnoremap \gc :<c-u>GitCheckout 
+nnoremap \gl :<c-u>GitLog<RETURN> 
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -658,7 +660,7 @@ endfunction
 " 別ウィンドウで開く
 command! -nargs=0 OpenNewWindow :silent !start gvim %
 
-" gitのブランチ名表示
+" git branch => vim statusline
 command! -nargs=0 GitBranch :call GitBranch()
 function! GitBranch()
   let dir = expand('%:p:h')
@@ -675,6 +677,45 @@ function! GitBranch()
   endif
   let b:git_branch = branch
 endfunction
+
+" git checkout
+command! -nargs=1 -complete=customlist,GitBranchList GitCheckout :call GitCheckout(<f-args>)
+function! GitCheckout(branch)
+  let res = system('git checkout ' . substitute(a:branch, '\*', '', ''))
+  if v:shell_error == 0
+    let b:git_branch = substitute(a:branch, '\*', '', '')
+  else
+	echo res
+  endif
+endfunction
+function! GitBranchList(A, L, P)
+  let items = []
+  let branchees = systemlist('git branch')
+  if v:shell_error != 0
+    echo join(branchees, ' ')
+    return []
+  endif
+  for item in branchees
+    if item[2:] =~ '^'.a:A
+      call add(items, substitute(item, ' ',  '', 'g'))
+    endif
+  endfor
+  return items
+endfunction
+
+" git log
+command! -nargs=0 GitLog :call GitLog()
+function! GitLog()
+  let lines = systemlist('git log --graph --shortstat --date=short --pretty=format:"%h %ad %an %s %d"')
+  if v:shell_error == 0
+    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
+    call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
+    setl nomodifiable
+  else
+    echo join(lines, ' ')
+  endif
+endfunction
+
 finish
 
 #---------------------------------------------------------------------------
