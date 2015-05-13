@@ -277,9 +277,6 @@ nnoremap \oo :<c-u>Loutline<RETURN>
 nnoremap \bb :<c-u>Lbookmark<RETURN>
 nnoremap \ba :<c-u>LRegistBookmark<RETURN>
 nnoremap \qq :<c-u>Lquick<RETURN>
-nnoremap \gb :<c-u>GitBranch<RETURN>
-nnoremap \gc :<c-u>GitCheckout 
-nnoremap \gl :<c-u>GitLog<RETURN> 
 
 command! -nargs=1 QuickOpen    :call QuickOpen(<f-args>)
 let s:show_quick_mode = {
@@ -706,11 +703,41 @@ endfunction
 " git log
 command! -nargs=0 GitLog :call GitLog()
 function! GitLog()
-  let lines = systemlist('git log --graph --shortstat --date=short --pretty=format:"%h %ad %an %s %d"')
+  if &buftype == 'nofile'
+    let path = expand('%:p:h')
+  else
+    let path = expand('%:p')
+  endif
+  " let lines = systemlist('git log --graph --shortstat --date=short --pretty=format:"%h %ad %an %s %d" ' . path)
+  let lines = systemlist('git log --graph --stat --date=short --decorate=full ' . path)
   if v:shell_error == 0
     new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
     call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
     setl nomodifiable
+    hi link gitlog Keyword
+    syn match gitlog /^.*\*.*$/
+  else
+    echo join(lines, ' ')
+  endif
+endfunction
+
+" git diff
+command! -nargs=0 GitDiff :call GitDiff()
+function! GitDiff()
+  if &buftype == 'nofile'
+    let path = expand('%:p:h')
+  else
+    let path = expand('%:p')
+  endif
+  let lines = systemlist('git diff ' . path)
+  if v:shell_error == 0
+    if len(lines) > 0
+      new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist\ filetype=diff
+      call setline(1,lines)
+      setl nomodifiable
+    else
+      echo 'no diff'
+    endif
   else
     echo join(lines, ' ')
   endif
