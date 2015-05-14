@@ -701,21 +701,19 @@ function! GitBranchList(A, L, P)
 endfunction
 
 " git log
-command! -nargs=0 GitLog :call GitLog()
-function! GitLog()
+command! -nargs=* GitLog :call GitLog(<f-args>)
+function! GitLog(...)
   if &buftype == 'nofile'
     let path = expand('%:p:h')
   else
     let path = expand('%:p')
   endif
   " let lines = systemlist('git log --graph --shortstat --date=short --pretty=format:"%h %ad %an %s %d" ' . path)
-  let lines = systemlist('git log --graph --stat --date=short --decorate=full ' . path)
+  let lines = systemlist('git log --graph --stat --date=short --decorate=full ' . join(a:000, ' ') . ' ' . path)
   if v:shell_error == 0
-    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
+    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist\ filetype=vb
     call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
     setl nomodifiable
-    hi link gitlog Keyword
-    syn match gitlog /^.*\*.*$/
   else
     echo join(lines, ' ')
   endif
@@ -742,6 +740,27 @@ function! GitDiff()
     echo join(lines, ' ')
   endif
 endfunction
+
+" git blame
+command! -nargs=* GitBlame :call GitBlame(<f-args>)
+function! GitBlame(...)
+  let ft = &filetype
+  if &buftype == 'nofile'
+	return
+  else
+    let path = expand('%:p')
+  endif
+  let lines = systemlist('git blame ' . join(a:000, ' ') . ' ' . path)
+  if v:shell_error == 0
+    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
+    call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
+    setl nomodifiable
+	exec ':setl filetype=' . ft
+  else
+    echo lines
+  endif
+endfunction
+
 
 finish
 
