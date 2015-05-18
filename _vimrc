@@ -700,67 +700,40 @@ function! GitBranchList(A, L, P)
   return items
 endfunction
 
-" git log
-command! -nargs=* GitLog :call GitLog(<f-args>)
-function! GitLog(...)
+" git log/diff/blame
+command! -nargs=* GitLog :call GitCommand('git log --graph --stat --date=short --decorate=full ', 'vb', 1, <f-args>)
+command! -nargs=* GitLogOneLine :call GitCommand('git log --graph --date=short --pretty=format:"%h %ad %an %s %d" ', 'vb', 1, <f-args>)
+command! -nargs=* GitDiff :call GitCommand('git diff ', 'diff', 0, <f-args>)
+command! -nargs=* GitBlame :call GitCommand('git blame ', '', 0, <f-args>)
+function! GitCommand(cmd, filetype, iconv, ...)
+  let ft = &filetype
   if &buftype == 'nofile'
     let path = expand('%:p:h')
   else
     let path = expand('%:p')
   endif
-  " let lines = systemlist('git log --graph --shortstat --date=short --pretty=format:"%h %ad %an %s %d" ' . path)
-  let lines = systemlist('git log --graph --stat --date=short --decorate=full ' . join(a:000, ' ') . ' ' . path)
-  if v:shell_error == 0
-    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist\ filetype=vb
-    call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
-    setl nomodifiable
-  else
-    echo join(lines, ' ')
-  endif
-endfunction
-
-" git diff
-command! -nargs=0 GitDiff :call GitDiff()
-function! GitDiff()
-  if &buftype == 'nofile'
-    let path = expand('%:p:h')
-  else
-    let path = expand('%:p')
-  endif
-  let lines = systemlist('git diff ' . path)
+  let lines = systemlist(a:cmd . join(a:000, ' ') . ' ' . path)
   if v:shell_error == 0
     if len(lines) > 0
-      new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist\ filetype=diff
-      call setline(1,lines)
+      new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
+      if a:iconv == 1
+        call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
+      else
+        call setline(1,lines)
+      endif
       setl nomodifiable
+      if a:filetype == ''
+        exec 'setl filetype=' . ft
+      else
+        exec 'setl filetype=' . a:filetype
+      endif
     else
-      echo 'no diff'
+      echo 'no outputs'
     endif
   else
     echo join(lines, ' ')
   endif
 endfunction
-
-" git blame
-command! -nargs=* GitBlame :call GitBlame(<f-args>)
-function! GitBlame(...)
-  let ft = &filetype
-  if &buftype == 'nofile'
-	return
-  else
-    let path = expand('%:p')
-  endif
-  let lines = systemlist('git blame ' . join(a:000, ' ') . ' ' . path)
-  if v:shell_error == 0
-    new +setl\ buftype=nofile\ bufhidden=delete\ noswf\ nowrap\ hidden\ nolist
-    call setline(1,map(lines, 'iconv(v:val, "utf-8", &enc)'))
-    setl nomodifiable
-	exec ':setl filetype=' . ft
-  else
-    echo lines
-  endif
-endfunction
-
 
 finish
 
