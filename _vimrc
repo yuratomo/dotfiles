@@ -133,8 +133,8 @@ au BufNewFile,BufRead *.html    inoremap <expr> <c-up>   html5#prevRef()
 au BufNewFile,BufRead *.css     setl omnifunc=css3#complete
 au BufNewFile,BufRead build.xml setl omnifunc=ant#complete
 
-au Filetype xml,xaml,mxml,html inoremap <buffer> </ </<C-x><C-o>
-au Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
+"au Filetype xml,xaml,mxml,html inoremap <buffer> </ </<C-x><C-o>
+"au Filetype xml,xaml,mxml,html inoremap <buffer> " "<C-x><C-o>
 
 try
   au CompleteDone *.php         call phpapi#showRef()
@@ -220,10 +220,10 @@ inoremap <c-space> <c-x><c-o><c-p>
 
 if has('gui')
   " resize window
-  nnoremap <A-n> :execute 'set lines=' . (&lines + 1)<CR>
-  nnoremap <A-p> :execute 'set lines=' . (&lines - 1)<CR>
-  nnoremap <A-f> :execute 'set columns=' . (&columns + 5)<CR>
-  nnoremap <A-b> :execute 'set columns=' . (&columns - 5)<CR>
+  nnoremap <A-n> :execute 'set lines=' . (&lines + 10)<CR>
+  nnoremap <A-p> :execute 'set lines=' . (&lines - 10)<CR>
+  nnoremap <A-f> :execute 'set columns=' . (&columns + 20)<CR>
+  nnoremap <A-b> :execute 'set columns=' . (&columns - 20)<CR>
 
   " move window
   nnoremap <expr><A-j> MoveWindow(0,20)

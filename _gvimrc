@@ -22,8 +22,8 @@ set guioptions-=l
 set guioptions-=L
 set guioptions-=L
 set guioptions-=e
-set columns=100
-set lines=42
+set columns=140
+set lines=60
 
 " ƒ}ƒEƒXİ’è
 set mouse=a
