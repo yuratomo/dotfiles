@@ -2,12 +2,13 @@
 let &runtimepath = &runtimepath.',~/.vim'
 
 call plug#begin('~/.vim/plugged')
+Plug 'itchyny/calendar.vim'
+Plug 'itchyny/screensaver.vim'
 Plug 'LeafCage/yankround.vim'
 Plug 'majutsushi/tagbar'
 Plug 'cohama/agit.vim'
 Plug 'vimwiki/vimwiki'
-Plug 'OmniSharp/omnisharp-vim'
-Plug 'mattn/calendar-vim'
+"Plug 'OmniSharp/omnisharp-vim'
 Plug 'mattn/httpstatus-vim'
 Plug 'Shougo/vinarise'
 Plug 'Shougo/neosnippet'
@@ -92,6 +93,7 @@ au!
 au FileType vim        set sw=2 ts=2 sts=2 et
 au FileType c,cpp      set sw=4 ts=4 sts=4 noet 
 au FileType java       set sw=4 ts=4 sts=4 noet
+au FileType json       set sw=2 ts=2 sts=2 et
 au FileType cs         set sw=4 ts=4 sts=4 et   fmr=#region,#endregion fdm=marker
 au FileType javascript set sw=2 ts=2 sts=2 et
 au FileType html       set sw=2 ts=2 sts=2 et
@@ -113,8 +115,8 @@ au BufNewFile,BufRead *.mxml    setf xml
 au BufNewFile,BufRead *.xaml    setf xaml
 
 au BufNewFile,BufRead *.xaml    setl omnifunc=xaml#complete
-"au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
-au BufNewFile,BufRead *.cs      setl omnifunc=OmniSharp#Complete
+au BufNewFile,BufRead *.cs      setl omnifunc=dotnet#complete
+"au BufNewFile,BufRead *.cs      setl omnifunc=OmniSharp#Complete
 "au BufNewFile,BufRead *.cs      inoremap <expr> <c-down> dotnet#nextRef()
 "au BufNewFile,BufRead *.cs      inoremap <expr> <c-up>   dotnet#prevRef()
 au BufNewFile,BufRead *.java    setl omnifunc=javaapi#complete
@@ -226,10 +228,10 @@ if has('gui')
   nnoremap <A-b> :execute 'set columns=' . (&columns - 20)<CR>
 
   " move window
-  nnoremap <expr><A-j> MoveWindow(0,20)
-  nnoremap <expr><A-k> MoveWindow(0,-20)
-  nnoremap <expr><A-h> MoveWindow(-20,0)
-  nnoremap <expr><A-l> MoveWindow(20,0)
+  nnoremap <expr><A-j> MoveWindow(0,40)
+  nnoremap <expr><A-k> MoveWindow(0,-40)
+  nnoremap <expr><A-h> MoveWindow(-40,0)
+  nnoremap <expr><A-l> MoveWindow(40,0)
   function! MoveWindow(w,h)
     silent redir => pos
       winpos
@@ -261,6 +263,13 @@ imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 let g:neosnippet#snippets_directory = '~/.vim/plugged/neosnippet-defines/snippets/'
+
+" calendar
+let g:calendar_google_calendar = 1
+let g:calendar_google_task = 1
+command! -nargs=0 Year :Calendar -view=year -split=horizontal -position=below -height=12<CR>
+command! -nargs=0 Clock :Calendar -view=clock -split=horizontal -position=below -height=7<CR>
+
 
 " find word under the cursor
 nnoremap + <right>?<c-r><c-w><cr><c-o><left>
@@ -309,6 +318,9 @@ nnoremap tt  <C-]>
 nnoremap tj  :<C-u>tag<CR>
 nnoremap tk  :<C-u>pop<CR>
 nnoremap tl  :<C-u>tags<CR>
+
+" 編集中の画面を消さずにshell起動
+nmap gsh :set t_te= t_ti=<cr>:sh<cr>:set t_te& t_ti&<cr>
 
 "---------------------------------------------------------------------------
 " Plugin settings
@@ -593,7 +605,7 @@ function! s:force_blockwise_visual(next_key)
 endfunction
 
 "カーソル行をBOLD、入力モードでBOLD解除、他のウィンドウでカーソル解除
-if has('syntax')
+if 0 && has('syntax')
   augroup InsertHook
     autocmd! InsertHook
     autocmd InsertEnter      * hi CursorLine guibg=NONE gui=NONE
@@ -656,6 +668,26 @@ endfunction
 
 " 別ウィンドウで開く
 command! -nargs=0 OpenNewWindow :silent !start gvim %
+
+" フォントズーム
+nmap + :ZoomFont 1<CR>
+nmap - :ZoomFont -1<CR>
+command! -narg=1 ZoomFont    :call s:ZoomFont(<f-args>)
+function! s:ZoomFont(w)
+  if !has('gui_running')
+    return
+  endif
+  let go = &guioptions
+  let fsize = substitute(&guifont, '^.*:h\([^:]*\).*$', '\1', '') + a:w
+  let guifont = substitute(&guifont, ':h\([^:]*\)', ':h' . fsize, '')
+  let &guifont = guifont
+  if stridx(go, 'C') != -1
+    if has('win32') | simalt ~x | endif
+  else
+    exe 'set lines=' . (&lines * (fsize-a:w)) / fsize
+    exe 'set columns=' . (&columns * (fsize-a:w)) / fsize
+  endif
+endfunction
 
 " git branch => vim statusline
 command! -nargs=0 GitBranch :call GitBranch()
