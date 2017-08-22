@@ -3,11 +3,13 @@
 " フォント設定
 if has('win32')
   "set guifont=ＭＳ_ゴシック:h8:cSHIFTJIS
-  set guifont=MS_Gothic:h8:cSHIFTJIS
-  set linespace=-1
+  "set guifont=MS_Gothic:h8:cSHIFTJIS
+  set guifont=Myrica\ M:h8:b:cSHIFTJIS
+  set linespace=0
   if has('printer')
     "set printfont=ＭＳ_ゴシック:h8:cSHIFTJIS
-    set printfont=MS_Gothic:h8:cSHIFTJIS
+    "set printfont=MS_Gothic:h8:cSHIFTJIS
+    set guifont=Myrica\ M:h8:b:cSHIFTJIS
   endif
 endif
 

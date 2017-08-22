@@ -54,6 +54,7 @@ endif
 "---------------------------------------------------------------------------
 set visualbell
 set number
+set incsearch hlsearch
 set list
 set nowrap
 set showcmd
@@ -80,10 +81,17 @@ set shortmess& shortmess+=I
 set textwidth=0
 set statusline=%f%m%#S1#\ %<%{expand('%:p:h')}%=%#S2#\ 
 let &statusline .= '%{exists("b:git_branch") ?  "[" . b:git_branch . "]" : ""}'
+let &statusline .= "%{g:GrepAsyncStatus()}"
 let &statusline .= "%6{(&fenc!=''?&fenc:&enc)}\ %#S3#%6{&ff}\ %#S4#%6{&ft}%#S5#%4l-%-3c"
 set undodir=~/.vim/undo/
 set pumheight=20
-
+set iminsert=2
+set imsearch=-1
+set backspace=indent,eol,start
+set encoding=utf-8
+set fencs=ucs-bom,utf-8,iso-2022-jp,euc-jp,cp932,utf-16le,utf-16,default
+set ambiwidth=double
+scriptencoding utf-8
 
 "---------------------------------------------------------------------------
 " autocommand
@@ -279,8 +287,8 @@ nnoremap \ss :<c-u>EchoShell<RETURN>
 nnoremap \ff :<c-u>WinFilerFind<RETURN>
 nnoremap \vv :<c-u>QuickOpen vimrc<RETURN>
 nnoremap \tt :<c-u>TagbarToggle<RETURN>
-nnoremap \gg :<c-u>GrepRoot  *<LEFT><LEFT>
-nnoremap \gc :<c-u>LgrepCancel<RETURN>
+nnoremap \gg :<c-u>Grep  *.<C-R>=expand('%:e')<CR><HOME><S-RIGHT><S-RIGHT>
+nnoremap \gc :<c-u>GrepCancel<RETURN>
 nnoremap \mm :<c-u>Lmru<RETURN>
 nnoremap \oo :<c-u>Loutline<RETURN>
 nnoremap \bb :<c-u>Lbookmark<RETURN>
@@ -294,7 +302,6 @@ let s:show_quick_mode = {
   \ 'vimrc' : { 'bufname':'_vimrc',     'cmd':'edit ' . expand('<sfile>') },
   \ }
 
-nnoremap <F3> :GrepResult<RETURN>
 nnoremap <F5> :<c-u>Back make<RETURN>
 
 " 括弧を自動補完 (改造版)
@@ -491,53 +498,6 @@ endfunction
 " <c-r>rでルートディレクトリ補完
 cnoremap <c-r>r <C-R>=GetRoot()<CR>
 
-" sln/makefile/build.xmlなどがあるルートディレクトリ取得
-let s:base_files = [
-\ 'Makefile',
-\ 'makefile',
-\ 'build.xml',
-\ '*.sln',
-\ '*.mak',
-\ ]
-command! -nargs=* GrepRoot  :call GrepRoot(<f-args>)
-function! GrepRoot(...)
-  let root = GetRoot()
-  if root == ''
-    let path = '**/' . a:2
-  else
-    let path = root . '/**/' . a:2
-  endif
-  call Lgrep#do(a:1, path)
-endfunction
-function! GetRoot()
-  let param = ''
-  let find = 0
-  let cnt = 10
-  while cnt > 0
-    let pwd  = expand('%:p:h' . param)
-    if strlen(pwd) == 3
-      break
-    endif
-
-    for f in s:base_files
-      let file = expand(pwd . '/' . f)
-      if filereadable(file)
-        let find = 1
-        break
-      endif
-    endfor
-	if find == 1
-	  break
-	endif
-    let param .= ':h'
-    let cnt -= 1
-  endwhile
-  if find == 1
-    return substitute(param, ':h', '..\', 'g')
-  endif
-  return ''
-endfunction
-
 " 簡易シェル
 command! -nargs=* EchoShell  :call EchoShell(<f-args>)
 function! EchoShell(...)
@@ -627,34 +587,124 @@ function! OpenNewTab()
   endif
 endfunction
 
-" バックグラウンドでgrepさせる
-command! -nargs=* Grep :call GrepNewWindow(<f-args>)
-function! GrepNewWindow(...)
-  let g:grep_base = expand('%:p:h')
-  let g:grep_str  = a:000[0]
-  exe ':!start cmd /c "jvgrep ' . join(a:000, ' ') . '" | tee ' . expand('~') . '/.grep_list'
-  redraw
-endfunction
-command! -nargs=0 GrepResult :call GrepResult()
-function! GrepResult()
-  if exists('g:grep_base')
-    exe 'cd "' . g:grep_base . '"'
-    unlet g:grep_base
+" 非同期Grep
+" sln/makefile/bupld.xmlなどがあるルートディレクトリ取得
+let s:base_files = [
+\ 'Makefile',
+\ 'makefile',
+\ 'build.xml',
+\ '*.sln',
+\ '*.mak',
+\ 'package.json',
+\ 'tags',
+\ ]
+command! -nargs=* Grep  :call GrepRoot(<f-args>)
+function! GrepRoot(...)
+  let root = GetRoot()
+  let param = [a:1]
+  if root == ''
+    call extend(param, map(a:000[1:], '"**/" . v:val'))
   else
-    let bfile = expand("~") . "/.grep_base"
-    if !filereadable(bfile)
-      return
+    call extend(param, map(a:000[1:], 'root . "/**/" . v:val'))
+  endif
+  call GrepAsync(param)
+endfunction
+
+function! GetRoot()
+  let param = ''
+  let find = 0
+  let cnt = 10
+  while cnt > 0
+    let pwd  = expand('%:p:h' . param)
+    if strlen(pwd) == 1 || ( strlen(pwd) == 3 && pwd[1] == ':') 
+      break
     endif
-    let pwd = readfile(bfile)[0]
-    exe 'cd "' . pwd . '/"'
+    for f in s:base_files
+      let file = expand(pwd . '/' . f)
+      if filereadable(file)
+        let find = 1
+        break
+      endif
+    endfor
+    if find == 1
+     break
+    endif
+    let param .= ':h'
+    let cnt -= 1
+  endwhile
+  if find == 1
+    return expand("%:p:h" . param)
   endif
-  cfile ~/.grep_list
-  cw
-  call Lsearch#Clear()
-  if exists('g:grep_str')
-    call Lsearch#Search(g:grep_str)
-    unlet g:grep_str
+  return ''
+endfunction
+
+function! GrepAsync(arg)
+  call GrepCancel()
+  call setqflist([])
+  let cmd = ['jvgrep', '--exclude', "\\.git\\.i\\.cs|\\.g\\.cs|\\.svs|\\.git|\\.hg|\\.obj"]
+  call extend(cmd, a:arg)
+  let s:grep_async_count = 0
+  let s:grep_async_job = job_start( cmd, {'out_cb': function('s:grep_async_handler'), 'exit_cb':function('s:grep_async_exit_handler')})
+  call s:grep_async_update_status('[grep:start]')
+
+  let s:grep_async_timer_id = timer_start(2000, function("s:grep_async_timer"), { "repeat" : -1 })
+endfunction
+function! s:grep_async_handler(ch, msg) abort
+  if s:grep_async_count == 0
+    copen
+    call cursor('$', 0)
+    let s:grep_async_buf = bufnr('%')
   endif
+
+  caddexpr a:msg
+  let s:grep_async_count += 1
+  call s:grep_async_update_status('[grep:' . s:grep_async_count . ']')
+
+  if s:grep_async_buf == bufnr('%')
+    if line('.') + 1 >= line('$')
+      call cursor('$', 0)
+    endif
+  endif
+endfunction
+
+command! -nargs=0 GrepCancel  :call GrepCancel()
+function! GrepCancel()
+  if exists('s:grep_async_job')
+    call job_stop(s:grep_async_job)
+    call s:grep_async_update_status('[grep:canceled]')
+    if exists('s:grep_async_timer_id')
+      call timer_stop(s:grep_async_timer_id)
+    endif
+    redrawstatus
+  endif
+endfunction
+
+function! g:GrepAsyncStatus()
+  return s:grep_async_status
+endfunction
+
+function! s:grep_async_timer(timer)
+  redrawstatus!
+endfunction
+
+function! s:grep_async_exit_handler(job, status)
+  if s:grep_async_job == a:job
+    call s:grep_async_update_status('[grep:fin]')
+    if exists('s:grep_async_timer_id')
+      call timer_stop(s:grep_async_timer_id)
+    endif
+    caddexpr '-- finish --'
+    redrawstatus
+  endif
+endfunction
+
+let s:grep_async_status = ''
+function! s:grep_async_update_status(msg)
+  let s:grep_async_status = a:msg
+endfunction
+
+function! s:disp(timer)
+    echo "callback"
 endfunction
 
 " QuickFixウィンドウだけのマップ
@@ -819,9 +869,6 @@ tar xzvf jvgrep.tar.gz
 mv jvgrep-win32-2.7/* .
 rmdir jvgrep-win32-2.7
 rm jvgrep.tar.gz
-
-# - ag
-curl -fLo ag.exe https://kjkpub.s3.amazonaws.com/software/the_silver_searcher/rel/0.18.1-1129/ag.exe
 
 # - dotfiles
 mkdir -p ~/.vim/plugged
